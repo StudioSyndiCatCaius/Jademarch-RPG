@@ -246,4 +246,19 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnCombatantNotify(UCombatantComponent* OwningCombatant, FName Notify, const FString& Flag);
+
+	//---------------------------------------------------------------------------------------------------------------//
+	// Combatant Owner Overrides //
+	//---------------------------------------------------------------------------------------------------------------//
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Combatant")
+	void OnActiveTargetChanged(UCombatantComponent* ActiveTarget, bool Valid);
+	UFUNCTION(BlueprintImplementableEvent, Category="Combatant")
+	void OnRegisteredTarget(UCombatantComponent* Target);
+	UFUNCTION(BlueprintImplementableEvent, Category="Combatant")
+	void OnUnregisteredTarget(UCombatantComponent* Target);
+/*
+	UFUNCTION(BlueprintImplementableEvent, Category="Combatant")
+	void OnDamaged(UCombatantComponent* Combatant, UOmegaAttribute* Attribute, float FinalDamage, UObject* Instigator);
+*/	
 };

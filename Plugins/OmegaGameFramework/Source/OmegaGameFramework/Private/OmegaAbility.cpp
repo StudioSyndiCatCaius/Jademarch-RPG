@@ -71,6 +71,10 @@ void AOmegaAbility::BeginPlay()
 	SetInputEnabledForOwner(true);
 
 	CombatantOwner->OnCombatantNotify.AddDynamic(this, &AOmegaAbility::OnCombatantNotify);
+	CombatantOwner->OnTargetAdded.AddDynamic(this, &AOmegaAbility::OnRegisteredTarget);
+	CombatantOwner->OnTargetRemoved.AddDynamic(this, &AOmegaAbility::OnUnregisteredTarget);
+	//CombatantOwner->OnDamaged.AddDynamic(this, &AOmegaAbility::OnDamaged);
+	CombatantOwner->OnActiveTargetChanged.AddDynamic(this, &AOmegaAbility::OnActiveTargetChanged);
 }
 
 void AOmegaAbility::EndPlay(const EEndPlayReason::Type EndPlayReason)

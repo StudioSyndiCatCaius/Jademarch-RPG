@@ -26,16 +26,6 @@ void UInputReceiverComponent::BeginPlay()
 	OverrideInputOwner(GetOwner());
 
 	//Local_InputAction = NewObject<UInputAction>(this, UInputAction::StaticClass());
-	Local_MappingContext = NewObject<UOmegaLocalInputMapping>(this, UOmegaLocalInputMapping::StaticClass());
-	InputAction = NewObject<UInputAction>(this, UInputAction::StaticClass());
-
-	for(FEnhancedActionKeyMapping TempMap : KeyMappings)
-	{
-		KeyMappings[KeyMappings.Find(InputAction)].Action = InputAction;
-	}
-	
-	Local_MappingContext->OverrideMappings = KeyMappings;
-	
 	
 	if(Cast<APawn>(GetOwner()))
 	{
@@ -114,15 +104,7 @@ void UInputReceiverComponent::OnOwningControllerChange(APawn* Pawn, AController*
 	UE_LOG(LogTemp, Display, TEXT("Attempted Input Reciever Owner Change (on new controller)") );
 	OverrideInputOwner(Pawn);
 
-	if(OldController)
-	{
-		Cast<APlayerController>(OldController)->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->RemoveMappingContext(Local_MappingContext);
-	}
-
-	if(NewController)
-	{
-		Cast<APlayerController>(OldController)->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(Local_MappingContext, 0);
-	}
+	
 }
 
 

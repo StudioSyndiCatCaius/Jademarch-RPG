@@ -14,14 +14,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInputTrigger);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInputComplete);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInputCancel);
 
-UCLASS(NotBlueprintType)
-class ENHANCEDINPUT_API UOmegaLocalInputMapping : public UInputMappingContext
-{
-	GENERATED_BODY()
-public:
-	TArray<FEnhancedActionKeyMapping> OverrideMappings;
-	virtual const TArray<FEnhancedActionKeyMapping>& GetMappings() const override { return OverrideMappings; }
-};
 
 UCLASS( ClassGroup=("Input"), meta=(BlueprintSpawnableComponent), DisplayName="Local Input Component" )
 class OMEGAGAMEFRAMEWORK_API UInputReceiverComponent : public UActorComponent
@@ -46,12 +38,7 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	class UInputAction* InputAction;
-
-	UPROPERTY()
-	UOmegaLocalInputMapping* Local_MappingContext;
-
-	UPROPERTY()
-	UInputAction* Local_InputAction;
+	
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
 	TArray<FEnhancedActionKeyMapping> KeyMappings;
