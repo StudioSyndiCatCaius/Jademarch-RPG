@@ -92,7 +92,7 @@ void UCombatantFunctions::ApplyEffectFromAsset(UCombatantComponent* Combatant, U
 		UE_LOG(LogTemp, Display, TEXT("Invalid Asset"));
 		return;
 	}
-	if(Asset->Implements<UDataInterface_OmegaEffect>())
+	if(Asset->GetClass()->ImplementsInterface(UDataInterface_OmegaEffect::StaticClass()))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Applied Effects from asset"));
 		for(const FOmegaEffectContainer TempEffect : IDataInterface_OmegaEffect::Execute_GetOmegaEffects(Asset))

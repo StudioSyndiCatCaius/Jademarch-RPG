@@ -72,6 +72,7 @@ FInputActionValue UInputReceiverComponent::GetInputActionValue()
 
 void UInputReceiverComponent::Native_Started()
 {
+	
 	UE_LOG(LogTemp, Display, TEXT("Attempted Input Reciever Action: Started") );
 	OnInputStarted.Broadcast();
 }
@@ -104,7 +105,17 @@ void UInputReceiverComponent::OnOwningControllerChange(APawn* Pawn, AController*
 	UE_LOG(LogTemp, Display, TEXT("Attempted Input Reciever Owner Change (on new controller)") );
 	OverrideInputOwner(Pawn);
 
+	if(Cast<APlayerController>(OldController))
+	{
+		GetOwner()->DisableInput(Cast<APlayerController>(OldController));
+	}
+	
+	if(Cast<APlayerController>(NewController))
+	{
+		GetOwner()->EnableInput(Cast<APlayerController>(NewController));
+	}
 	
 }
+
 
 

@@ -10,7 +10,7 @@
 
 class UTurnBasedManagerComponent;
 
-UCLASS(BlueprintType, Blueprintable)
+UCLASS(Blueprintable, BlueprintType)
 class OMEGAGAMEFRAMEWORK_API UTurnManagerBase : public UObject
 {
 	GENERATED_BODY()

@@ -25,5 +25,7 @@ public:
 	UPROPERTY(EditInstanceOnly, Category="Event")
 	bool GlobalSave;
 
+	
+
 	virtual void Native_Begin() override;
 };

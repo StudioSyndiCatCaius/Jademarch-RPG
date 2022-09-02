@@ -2,7 +2,8 @@
 
 
 #include "OmegaDataItem.h"
-
+#include "Gameplay/DataInterface_OmegaEffect.h"
+#include "OmegaGameplayEffect.h"
 
 bool UOmegaDataItem::AreTagsAccepted(const FString& Query, FGameplayTagContainer Tags)
 {
@@ -195,6 +196,17 @@ TArray<FOmegaAttributeModifier> UOmegaDataItem::GetModifierValues_Implementation
 		}
 	}
 	return OutMods;
+}
+
+TArray<FOmegaEffectContainer> UOmegaDataItem::GetOmegaEffects_Implementation()
+{
+	TArray<FOmegaEffectContainer> OutEffects;
+	
+	for(auto* TempTrait : GetTraitsWithInterface(UDataInterface_OmegaEffect::StaticClass()))
+	{
+		OutEffects.Append(IDataInterface_OmegaEffect::Execute_GetOmegaEffects(TempTrait));
+	}
+	return OutEffects;
 }
 
 //PROPETIES

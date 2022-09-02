@@ -95,14 +95,14 @@
 			]
 		},
 		{
-			"Name" : "Flow",
-			"Type" : "Runtime",
-			"LoadingPhase" : "PreDefault"
+			"Name": "Flow",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault"
 		},
 		{
-			"Name" : "FlowEditor",
-			"Type" : "Editor",
-			"LoadingPhase" : "Default"
+			"Name": "FlowEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "OmegaDemo",
@@ -113,6 +113,11 @@
 				"Linux",
 				"Mac"
 			]
+		},
+		{
+			"name": "OmegaVisual",
+			"type": "Runtime",
+			"loadingPhase": "Default"
 		}
 	],
 	"Plugins": [

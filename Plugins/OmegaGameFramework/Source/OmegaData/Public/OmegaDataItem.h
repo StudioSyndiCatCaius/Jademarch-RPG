@@ -16,6 +16,7 @@
 #include "Data/DataAssetCollectionInterface.h"
 #include "Data/SoftPropertiesInterface.h"
 #include "Gameplay/DataInterface_AttributeModifier.h"
+#include "Gameplay/DataInterface_OmegaEffect.h"
 #include "OmegaDataItem.generated.h"
 
 /**
@@ -23,7 +24,7 @@
  */
 UCLASS()
 class OMEGADATA_API UOmegaDataItem : public UPrimaryDataAsset, public IDataInterface_General, public IGameplayTagsInterface, public IDataAssetCollectionInterface,
-																public ISoftPropertiesInterface, public IDataInterface_AttributeModifier
+																public ISoftPropertiesInterface, public IDataInterface_AttributeModifier, public IDataInterface_OmegaEffect
 {
 	GENERATED_BODY()
 
@@ -119,7 +120,7 @@ FGameplayTag GetObjectGameplayCategory();
 	virtual int32 GetMaxCollectionNumber_Implementation() override;
 
 	virtual TArray<FOmegaAttributeModifier> GetModifierValues_Implementation() override;
-
+	virtual TArray<FOmegaEffectContainer> GetOmegaEffects_Implementation() override;
 	
 	//Soft Propertoes
 	

@@ -149,13 +149,14 @@ bool UTurnBasedManagerComponent::NextTurn(bool bGenerateIfEmpty, FString Flag, F
 	if(GetActiveTurnMember() != nullptr)
 	{
 		FString LocalFailReason;
-		if(TurnManager->FailBeingTurn(FailReason))
+		if(TurnManager->FailBeingTurn(FailReason))	//When Failed to Start Turn
 		{
+			OnTurnFail.Broadcast(FailReason);
 			return false;
 		}
 		FailReason = "";
-		OnTurnStart.Broadcast(GetActiveTurnMember(), Flag, Tags);
-
+		
+		BeginTurn(GetActiveTurnMember(), Flag, Tags);
 		
 		//Function on Combatant Actor
 		if(DoesCombatantUseInterface(GetActiveTurnMember()))
@@ -171,6 +172,40 @@ bool UTurnBasedManagerComponent::NextTurn(bool bGenerateIfEmpty, FString Flag, F
 	}
 }
 
+void UTurnBasedManagerComponent::BeginTurn(UCombatantComponent* Combatant, FString Flag, FGameplayTagContainer Tags)
+{
+	OnTurnStart.Broadcast(Combatant, Flag, Tags);
+	bool LocalSuccess;
+	Combatant->GrantAbility(Local_GetTurnAbility());
+	LocalTurnAbility = Combatant->ExecuteAbility(Local_GetTurnAbility(), this,LocalSuccess);
+	if(LocalSuccess && LocalTurnAbility)
+	{
+		LocalTurnAbility->OnAbilityFinished.AddDynamic(this, &UTurnBasedManagerComponent::Local_TurnAbilityFinish);
+	}
+}
+
+void UTurnBasedManagerComponent::Local_TurnAbilityFinish(bool Cancelled)
+{
+	if(LocalTurnAbility)
+	{
+		LocalTurnAbility->OnAbilityFinished.RemoveDynamic(this, &UTurnBasedManagerComponent::Local_TurnAbilityFinish);
+	}
+	
+
+	///Should Repeat Turn?
+	if(bRepeatTurnOnAbilityCancel && Cancelled)			
+	{
+		BeginTurn(GetActiveTurnMember(), "Repeat", RepeatedTurnTags);
+	}
+	else //Try Start Turn
+	{
+		
+		FString TurnFailReason;
+		NextTurn(bGenerateTurnOrderIfEmpty, "NextTurn", NextTurnTags, TurnFailReason);
+	}
+	
+}
+
 void UTurnBasedManagerComponent::ClearTurnOrder(FString Flag, FGameplayTagContainer Tags)
 {
 	for(UCombatantComponent* TempCombatant : TurnOrder)
@@ -179,6 +214,8 @@ void UTurnBasedManagerComponent::ClearTurnOrder(FString Flag, FGameplayTagContai
 	}
 	TurnOrder.Empty();
 }
+
+
 
 // REGISTER
 void UTurnBasedManagerComponent::RegisterCombatant(UCombatantComponent* Combatant, FString Flag, FGameplayTagContainer Tags)

@@ -84,4 +84,10 @@ public:
 		FOpened OnOpened;
 	UPROPERTY(BlueprintAssignable)
 		FClosed OnClosed;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGlobalEvent(FName Event, UObject* Context);
+	UFUNCTION()
+	void Local_BindGlobalEvent();
+	
 };

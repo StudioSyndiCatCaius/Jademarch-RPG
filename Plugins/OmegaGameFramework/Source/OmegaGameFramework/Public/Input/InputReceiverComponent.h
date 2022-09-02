@@ -39,12 +39,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	class UInputAction* InputAction;
 	
-	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
 	TArray<FEnhancedActionKeyMapping> KeyMappings;
 	
 	UPROPERTY()
 	class UEnhancedInputComponent* OwnerInputComp;
+	
 
 	UFUNCTION()
 	void Native_Started();

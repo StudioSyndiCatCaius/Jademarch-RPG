@@ -42,6 +42,7 @@ FGameplayTagContainer UOmegaAttribute::GetObjectGameplayTags_Implementation()
 void UOmegaAttribute::GetGeneralDataText_Implementation(const FString& Label, const UObject* Context, FText& Name, FText& Description)
 {
 	Name = AttributeName;
+	Description = AttributeDescription;
 }
 
 void UOmegaAttribute::GetGeneralDataImages_Implementation(const FString& Label, const UObject* Context,

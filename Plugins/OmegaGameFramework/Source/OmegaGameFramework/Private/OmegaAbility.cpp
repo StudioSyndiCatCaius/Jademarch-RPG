@@ -77,17 +77,22 @@ void AOmegaAbility::BeginPlay()
 	CombatantOwner->OnActiveTargetChanged.AddDynamic(this, &AOmegaAbility::OnActiveTargetChanged);
 }
 
+
+
 void AOmegaAbility::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Private_SetSoftTagsOnActor(GrantedActorOwnerTags, false);
-	
-	if(CombatantOwner->GetOwnerPlayerController() && HudClass)
+	if(EndPlayReason == EEndPlayReason::Destroyed && !GetWorld()->bIsTearingDown)
 	{
-		CombatantOwner->GetOwnerPlayerController()->GetLocalPlayer()->GetSubsystem<UOmegaPlayerSubsystem>()->RemoveHUDLayer(HudClass, "AbilityUngranted");
-	}
+		Private_SetSoftTagsOnActor(GrantedActorOwnerTags, false);
 	
+		if(CombatantOwner->GetOwnerPlayerController() && HudClass)
+		{
+			CombatantOwner->GetOwnerPlayerController()->GetLocalPlayer()->GetSubsystem<UOmegaPlayerSubsystem>()->RemoveHUDLayer(HudClass, "AbilityUngranted");
+		}
+	
+		RecieveFinish(true);
+	}
 	Super::EndPlay(EndPlayReason);
-	RecieveFinish(true);
 }
 
 void AOmegaAbility::TryAssignControlInput(APawn* Pawn, AController* Controller)
@@ -167,7 +172,10 @@ void AOmegaAbility::Execute(UObject* Context)
 		{
 			GetAbilityActivationTimeline()->Play();
 		}
-
+		if(!Context)
+		{
+			Context = nullptr;
+		}
 		Native_AbilityActivated(Context);
 	}
 }
@@ -306,7 +314,7 @@ void AOmegaAbility::GetRemainingCooldownValues(float& Normalized, float& Seconds
 //Finish Ability
 void AOmegaAbility::RecieveFinish(bool bCancel)
 {
-	if (bIsActive)
+	if (bIsActive && !GetWorld()->bIsTearingDown)
 	{
 		bIsActive = false;
 		CombatantOwner->SetAbilityActive(false, this);

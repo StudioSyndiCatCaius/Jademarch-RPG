@@ -26,7 +26,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, DisplayName = "Name", Category = "General")
 	FText AttributeName;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, DisplayName = "Description", Category = "General")
+	FText AttributeDescription;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, DisplayName = "Label", Category = "General")
 	FString AttributeLabel;
 
