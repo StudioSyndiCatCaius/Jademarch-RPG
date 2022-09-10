@@ -3,6 +3,7 @@
 
 #include "Save/OmegaSaveSubsystem.h"
 
+#include "K2Node_CastByteToEnum.h"
 #include "OmegaGameManager.h"
 #include "Save/OmegaSaveGame.h"
 #include "Save/OmegaSaveGlobal.h"
@@ -76,13 +77,38 @@ UOmegaSaveGame* UOmegaSaveSubsystem::LoadGame(int32 Slot, bool& Success)
 	}
 	return nullptr;
 }
+
+
 //ON SAVE
 void UOmegaSaveSubsystem::SaveActiveGame(int32 Slot, bool& Success)
 {
 	FString SlotName;
 	GetSaveSlotName(Slot, SlotName);
-	UOmegaSaveGame* LocalActiveData = Cast<UOmegaSaveGame>(ActiveSaveData);
+	//UOmegaSaveGame* LocalActiveData = Cast<UOmegaSaveGame>(ActiveSaveData);
+	
+	Success = Local_SaveGame(SlotName);
+}
 
+
+bool UOmegaSaveSubsystem::SaveGameUnique(EUniqueSaveFormats Format)
+{
+	FString LocalSaveName;
+	
+	switch (Format) {
+	case EUniqueSaveFormats::SaveFormat_Quicksave:
+		LocalSaveName = "quicksave";
+		break;
+	case EUniqueSaveFormats::SaveFormat_Autosave:
+		LocalSaveName = "autosave";
+		break;
+	default: ;
+	}
+
+	return Local_SaveGame(LocalSaveName);
+}
+
+bool UOmegaSaveSubsystem::Local_SaveGame(FString SlotName)
+{
 	//LocalActiveData->ActiveLevelName = UGameplayStatics::GetCurrentLevelName(this);
 
 	TArray<AActor*> ActorsForSaving;
@@ -101,17 +127,18 @@ void UOmegaSaveSubsystem::SaveActiveGame(int32 Slot, bool& Success)
 	
 	if (IsValid(UGameplayStatics::GetPlayerPawn(this, 0)))
 	{
-		LocalActiveData->SavedPlayerTransform = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorTransform();
+		ActiveSaveData->SavedPlayerTransform = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorTransform();
 	}
 
 	//SaveDate
-	LocalActiveData->SaveDate = UKismetMathLibrary::Now();
+	ActiveSaveData->SaveDate = UKismetMathLibrary::Now();
 	
 	//Save Playtime
 	//LocalActiveData->SavedPlaytime = GetGameInstance()->GetSubsystem<UOmegaGameManager>()->Playtime;
 	
-	UGameplayStatics::SaveGameToSlot(LocalActiveData, SlotName, 0);
+	return UGameplayStatics::SaveGameToSlot(ActiveSaveData, SlotName, 0);
 }
+
 
 //Create a new Save File Object
 UOmegaSaveGame* UOmegaSaveSubsystem::CreateNewGame()

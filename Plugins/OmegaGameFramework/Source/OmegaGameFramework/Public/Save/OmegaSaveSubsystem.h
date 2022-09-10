@@ -25,6 +25,14 @@ enum class ELevelOpenType : uint8
 };
 
 UENUM(BlueprintType)
+enum class EUniqueSaveFormats : uint8
+{
+	SaveFormat_Quicksave		UMETA(DisplayName = "Quicksave"),
+	SaveFormat_Autosave			UMETA(DisplayName = "Autosave"),
+	
+};
+
+UENUM(BlueprintType)
 enum EBoolType 
 {
 	BoolType_And     UMETA(DisplayName = "AND"),
@@ -63,9 +71,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ω|SaveSubsystem")
 		UOmegaSaveGame* LoadGame(int32 Slot, bool& Success);
 
+	//###############################################################################################
+	// SAVING
+	//###############################################################################################
+	UFUNCTION(BlueprintCallable, Category = "Ω|SaveSubsystem", DisplayName="Save Game (Unique Format)")
+	bool SaveGameUnique(EUniqueSaveFormats Format);
+	
 	UFUNCTION(BlueprintCallable, Category = "Ω|SaveSubsystem")
-		void SaveActiveGame(int32 Slot, bool& Success);
+	void SaveActiveGame(int32 Slot, bool& Success);
 
+	UFUNCTION()
+	bool Local_SaveGame(FString SlotName);
+	
 	UFUNCTION(BlueprintCallable, Category = "Ω|SaveSubsystem")
 		UOmegaSaveGame* CreateNewGame();
 

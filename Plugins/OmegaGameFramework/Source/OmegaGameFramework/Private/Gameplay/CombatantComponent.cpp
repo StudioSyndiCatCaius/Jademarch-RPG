@@ -16,7 +16,6 @@
 #include "Gameplay/ActorInterface_Combatant.h"
 #include "Gameplay/DataInterface_Combatant.h"
 #include "Gameplay/DataInterface_DamageModifier.h"
-#include "Gameplay/Combatant/AttributeDamagePopup.h"
 #include "Gameplay/Combatant/CombatantTargetIndicator.h"
 #include "Kismet/KismetTextLibrary.h"
 
@@ -336,6 +335,11 @@ bool UCombatantComponent::GrantAbility(TSubclassOf<AOmegaAbility> AbilityClass)
 		{
 			LocalAbility->CachedCharacter = Cast<ACharacter>(GetOwner());
 		}
+		if (Cast<APawn>(GetOwner()))
+		{
+			LocalAbility->SetInstigator(Cast<APawn>(GetOwner()));
+		}
+		
 		UGameplayStatics::FinishSpawningActor(LocalAbility, SpawnWorldPoint);
 		LocalAbility->AttachToActor(GetOwner(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false));
 		//Add to AbilitiesList
@@ -536,15 +540,6 @@ float UCombatantComponent::ApplyAttributeDamage(class UOmegaAttribute* Attribute
 	//UPDATE NEW CURRENT VALUE
 	CurrentAttributeValues.Add(Attribute, CurrentValue);				
 	OnDamaged.Broadcast(this, Attribute, FinalDamage, Instigator);
-
-	//DamagePopup
-	if(DamagePopupClass)
-	{
-		UAttributeDamagePopup* LocalPopup = Cast<UAttributeDamagePopup>(CreateWidget(GetWorld(), DamagePopupClass));
-		LocalPopup->Native_OnDamagePopup(this, Attribute, FinalDamage, Instigator);
-
-		LocalPopup->AddToViewport();
-	}
 	
 	Update();
 	return FinalDamage;
@@ -1082,6 +1077,10 @@ UCombatantComponent* UCombatantComponent::GetActiveTarget()
 
 int32 UCombatantComponent::GetActiveTargetIndex()
 {
+	if(GetActiveTarget() && GetRegisteredTargetList().Contains(GetActiveTarget()))
+	{
+		return GetRegisteredTargetList().Find(GetActiveTarget());
+	}
 	return 0;
 }
 

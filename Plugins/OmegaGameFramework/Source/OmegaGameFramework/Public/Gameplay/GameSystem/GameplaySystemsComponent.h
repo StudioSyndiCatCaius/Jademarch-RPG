@@ -20,7 +20,8 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 	void Local_ActivateSystems();
 	void Local_ShutdownSystems();
 	
@@ -29,9 +30,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-	virtual void Activate(bool bReset) override;
-	virtual void Deactivate() override;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay")
 	TArray<TSubclassOf<AOmegaGameplaySystem>> GameplaySystems;
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay")

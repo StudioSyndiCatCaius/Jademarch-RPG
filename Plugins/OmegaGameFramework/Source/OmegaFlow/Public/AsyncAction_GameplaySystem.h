@@ -32,13 +32,15 @@ public:
 	UObject* LocalContext = nullptr;
 	UPROPERTY()
 	UOmegaGameplaySubsystem* SubSysRef;
+	UPROPERTY()
+	const UObject* Local_WorldContext;
 	
 	UFUNCTION()
 	void NativeShutdown(const FString Flag);
 	
 	virtual void Activate() override;
-	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = "true"), Category="Omega|GameplayTasks")
-	static UAsyncAction_GameplaySystem* ActivateGameplaySystem(UOmegaGameplaySubsystem* Subsystem, const TSubclassOf<AOmegaGameplaySystem> SystemClass, UObject* Context, const FString Flag);
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = "true"), Category="Omega|GameplayTasks", meta = (WorldContext = "WorldContextObject")) 
+	static UAsyncAction_GameplaySystem* ActivateGameplaySystem(const UObject* WorldContextObject, const TSubclassOf<AOmegaGameplaySystem> SystemClass, UObject* Context, const FString Flag);
 
 	
 };

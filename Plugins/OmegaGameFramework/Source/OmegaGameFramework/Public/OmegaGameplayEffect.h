@@ -8,9 +8,11 @@
 #include "GameplayTagContainer.h"
 #include "VolumeUtils.h"
 #include "DamageFormula.h"
+#include "Gameplay/Combatant/OmegaEffectPopup.h"
 #include "OmegaGameplayEffect.generated.h"
 
 class AOmegaGameplayEffect;
+
 
 USTRUCT(BlueprintType)
 struct FOmegaEffectContainer
@@ -47,7 +49,8 @@ UCLASS()
 class OMEGAGAMEFRAMEWORK_API AOmegaGameplayEffect : public AActor, public IGameplayTagsInterface
 {
 	GENERATED_BODY()
-	
+
+
 public:	
 	// Sets default values for this actor's properties
 	AOmegaGameplayEffect();
@@ -129,7 +132,32 @@ public:
 	FGameplayTagContainer GetObjectGameplayTags();
 	virtual FGameplayTagContainer GetObjectGameplayTags_Implementation();
 
+	//###############################################################################################################
+	// POPUP
+	//###############################################################################################################
+	UPROPERTY(EditDefaultsOnly, Category="Popup")
+	bool bShowPopupOnTrigger;
+	UPROPERTY(EditDefaultsOnly, Category="Popup")
+	TSubclassOf<UOmegaEffectPopup> PopupClass;
 
+	TSubclassOf<UOmegaEffectPopup> Local_GetPopupClass()
+	{
+		if(PopupClass)
+		{
+			return PopupClass;
+		}
+		else
+		{
+			return UOmegaEffectPopup::StaticClass();
+		}
+	}
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Popup")
+	FText GetTriggeredPopupText();
+	UFUNCTION(BlueprintImplementableEvent, Category="Popup")
+	FSlateColor GetTriggeredPopupColor();
+
+	
 	//Misc
 	FTimerHandle LifetimeTimer;
 

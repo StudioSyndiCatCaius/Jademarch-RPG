@@ -3,6 +3,7 @@
 
 #include "Gameplay/CombatantFunctions.h"
 
+#include "OmegaGameplaySubsystem.h"
 #include "Gameplay/DataInterface_OmegaEffect.h"
 
 TArray<UCombatantComponent*> UCombatantFunctions::FilterCombatantsByTags(
@@ -116,4 +117,17 @@ UCombatantComponent* UCombatantFunctions::GetPlayerCombatant(const UObject* Worl
 		}
 	}
 	return nullptr;
+}
+
+void UCombatantFunctions::NotifyCombatantFaction(const UObject* WorldContextObject, FGameplayTag Faction, FName Notify)
+{
+	TArray<UCombatantComponent*> LocalList = WorldContextObject->GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>()->GetAllCombatants();
+
+	for(auto* TempComb : LocalList)
+	{
+		if(TempComb->GetFactionTag() == Faction)
+		{
+			TempComb->CombatantNotify(Notify,"");
+		}
+	}
 }

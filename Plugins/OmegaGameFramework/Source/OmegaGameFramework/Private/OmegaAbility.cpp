@@ -247,6 +247,11 @@ ACharacter* AOmegaAbility::GetAbilityOwnerCharacter()
 	return CachedCharacter;
 }
 
+APlayerController* AOmegaAbility::GetAbilityOwnerPlayer()
+{
+	return CombatantOwner->GetOwnerPlayerController();
+}
+
 UCharacterMovementComponent* AOmegaAbility::GetAbilityOwnerCharacterMoveComponent()
 {
 	TempMoveComp = CachedCharacter->GetMovementComponent();

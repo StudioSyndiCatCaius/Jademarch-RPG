@@ -91,6 +91,17 @@ void AOmegaGameplayEffect::TriggerEffect()
 	EffectApplied(CalculateDamageValue());
 	OnEffectTriggered.Broadcast(this, CalculateDamageValue());
 	UE_LOG(LogTemp, Display, TEXT("Applied Effect"));
+
+	//--Popup--//
+	if(bShowPopupOnTrigger)
+	{
+		
+		UOmegaEffectPopup* LocalPopup = Cast<UOmegaEffectPopup>(CreateWidget(GetWorld(), Local_GetPopupClass()));
+		LocalPopup->OwningEffect = this;
+
+		// After setting everything, add to viewport
+		LocalPopup->AddToViewport();
+	}
 	
 	if(EffectLifetime == EEffectLifetime::EffectLifetime_OnTrigger)
 	{

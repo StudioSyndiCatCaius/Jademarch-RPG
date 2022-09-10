@@ -54,5 +54,14 @@ class UOmegaGameFrameworkBPLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintPure, Category="Ω|Player")
 	static AActor* GetPlayerMouseOverActor(APlayerController* Player, ETraceTypeQuery TraceChannel, float TraceSphereRadius);
 
+
+	//------- ACTOR BINDING --------//
+	
+	UFUNCTION(BlueprintCallable, Category="Omega Gameplay", meta = (WorldContext = "WorldContextObject"))
+	static void SetGlobalActorBinding(const UObject* WorldContextObject, FName Binding, AActor* Actor);
+	UFUNCTION(BlueprintCallable, Category="Omega Gameplay", meta = (WorldContext = "WorldContextObject"))
+	static void ClearGlobalActorBinding(const UObject* WorldContextObject, FName Binding);
+	UFUNCTION(BlueprintPure, Category="Omega Gameplay", meta = (WorldContext = "WorldContextObject"))
+	static AActor* GetGlobalActorBinding(const UObject* WorldContextObject, FName Binding);
 	
 };

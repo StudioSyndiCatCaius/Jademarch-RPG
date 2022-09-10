@@ -8,8 +8,12 @@
 void ULinearEvent_SimpleMessage::GetGeneralDataText_Implementation(const FString& Label, const UObject* Context,
                                                                    FText& Name, FText& Description)
 {
-	Name = Title;
 	Description = Message;
+}
+
+FGameplayTagContainer ULinearEvent_SimpleMessage::GetObjectGameplayTags_Implementation()
+{
+	return Tags;
 }
 
 void ULinearEvent_SimpleMessage::Native_Begin()

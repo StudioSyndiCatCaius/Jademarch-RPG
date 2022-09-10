@@ -105,11 +105,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ω|Ability")
 	void CancelAbility();
 
-	//Owner Gets//
-	
+	//-###########################################################################################################-//
+	//---- OWNER GETS
+	//-###########################################################################################################-//
 	UFUNCTION(BlueprintPure, Category = "Ω|Ability|Owner")
 	class ACharacter* GetAbilityOwnerCharacter();
 
+	UFUNCTION(BlueprintPure, Category = "Ω|Ability|Owner")
+	APlayerController* GetAbilityOwnerPlayer();
+	
 	UFUNCTION(BlueprintPure, Category = "Ω|Ability|Owner")
 	class UCharacterMovementComponent* GetAbilityOwnerCharacterMoveComponent();
 
@@ -124,10 +128,33 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ω|Ability|Tags")
 	void RemoveBlockedAbilityTags(FGameplayTagContainer RemovedTags);
 
-	//### Input ###//
+	//-###########################################################################################################-//
+	//---- INPUT
+	//-###########################################################################################################-//
 	UPROPERTY(VisibleAnywhere, Category="Input")
 	class UInputReceiverComponent* DefaultInputReceiver;
 
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	bool bEnableInputOnActivation;
+
+protected:
+	UFUNCTION()
+	void Local_SetInputEnabled(bool Enabled)
+	{
+		if(GetAbilityOwnerPlayer())
+		{
+			if(Enabled)
+			{
+				EnableInput(GetAbilityOwnerPlayer());
+			}
+			else
+			{
+				DisableInput(GetAbilityOwnerPlayer());
+			}
+		}
+	}
+
+public:
 	//FlipFlops the input
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	bool FlipFlopInput;

@@ -16,13 +16,13 @@ class OMEGADEMO_API ULinearEvent_CameraFade : public UOmegaLinearEvent
 public:
 	virtual void Native_Begin() override;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Fade")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Fade", meta=(ExposeOnSpawn))
 	float BeginAlpha = 1.0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Fade")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Fade", meta=(ExposeOnSpawn))
 	float EndAlpha;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Fade")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Fade", meta=(ExposeOnSpawn))
 	FLinearColor Color;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Fade")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Fade", meta=(ExposeOnSpawn))
 	float Duration = 0.5;
 
 	UPROPERTY()

@@ -15,6 +15,7 @@
 class AOmegaGameplaySystem;
 class UOmegaSettings;
 class UDamageFormula;
+class UCombatantFilter;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCombatantRegistered, UCombatantComponent*, Combatant);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCombatantUnegistered, UCombatantComponent*, Combatant);
@@ -64,4 +65,22 @@ public:
 	FOnCombatantRegistered OnCombatantRegistered;
 	UPROPERTY(BlueprintAssignable)
     FOnCombatantUnegistered OnCombatantUnegistered;
+
+	UFUNCTION(BlueprintCallable, Category="OmegaGameplaySubsystem")
+	TArray<UCombatantComponent*> RunCustomCombatantFilter(TSubclassOf<UCombatantFilter> FilterClass, UCombatantComponent* Instigator, const TArray<UCombatantComponent*>& Combatants);
+
+	////////////////////////////////////
+	////////////--Actor Binding--/////////////
+	////////////////////////////////////
+
+	UPROPERTY()
+	TMap<FName, AActor*> GlobalActorBindingRefs;
+	
+	UFUNCTION(BlueprintCallable, Category="Omega Gameplay Subsystem")
+	void SetGlobalActorBinding(FName Binding, AActor* Actor);
+	UFUNCTION(BlueprintCallable, Category="Omega Gameplay Subsystem")
+	void ClearGlobalActorBinding(FName Binding);
+	UFUNCTION(BlueprintPure, Category="Omega Gameplay Subsystem")
+	AActor* GetGlobalActorBinding(FName Binding);
+		
 };

@@ -17,11 +17,14 @@ void AAbility_Montage::BeginPlay()
 {
 	if(GetAbilityOwnerMesh())
 	{
-		LocalAnimInst = GetAbilityOwnerMesh()->GetAnimInstance();
-		LocalAnimInst->OnPlayMontageNotifyBegin.AddDynamic(this, &AAbility_Montage::OnNotifyBeginReceived);
-		LocalAnimInst->OnPlayMontageNotifyEnd.AddDynamic(this, &AAbility_Montage::OnNotifyEndReceived);
-		LocalAnimInst->OnMontageEnded.AddDynamic(this, &AAbility_Montage::Local_OnMontageEnd);
-		UE_LOG(LogTemp, Warning, TEXT("Test Notify") );
+		if(GetAbilityOwnerMesh()->GetAnimInstance())
+		{
+			LocalAnimInst = GetAbilityOwnerMesh()->GetAnimInstance();
+			LocalAnimInst->OnPlayMontageNotifyBegin.AddDynamic(this, &AAbility_Montage::OnNotifyBeginReceived);
+			LocalAnimInst->OnPlayMontageNotifyEnd.AddDynamic(this, &AAbility_Montage::OnNotifyEndReceived);
+			LocalAnimInst->OnMontageEnded.AddDynamic(this, &AAbility_Montage::Local_OnMontageEnd);
+			UE_LOG(LogTemp, Warning, TEXT("Test Notify") );
+		}
 	}
 	Super::BeginPlay();
 }

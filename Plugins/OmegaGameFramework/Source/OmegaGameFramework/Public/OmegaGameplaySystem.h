@@ -121,6 +121,8 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "Ω|GamePreferences")
 	bool OnActiveGameSaved();
+
+	
 };
 
 

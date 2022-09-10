@@ -7,6 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
+#include "Gameplay/Combatant/CombatantFilter.h"
+
 
 void UOmegaGameplaySubsystem::Initialize(FSubsystemCollectionBase& Colection)
 {
@@ -28,6 +30,7 @@ void UOmegaGameplaySubsystem::Initialize(FSubsystemCollectionBase& Colection)
 
 AOmegaGameplaySystem* UOmegaGameplaySubsystem::ActivateGameplaySystem(TSubclassOf<AOmegaGameplaySystem> Class, UObject* Context, FString Flag)
 {
+	
 	if (Class)
 	{
 		struct FActorSpawnParameters SystemParams;
@@ -42,6 +45,10 @@ AOmegaGameplaySystem* UOmegaGameplaySubsystem::ActivateGameplaySystem(TSubclassO
 			UGameplayStatics::FinishSpawningActor(DummySystem, SpawnWorldPoint);
 			ActiveSystems.Add(DummySystem);
 			DummySystem->SystemActivated(Context, Flag);
+			if(Context)
+			{
+				DummySystem->ContextObject = Context;
+			}
 			return DummySystem;
 		}
 	}
@@ -125,4 +132,38 @@ void UOmegaGameplaySubsystem::NativeRemoveSystem(AOmegaGameplaySystem* System)
 	{
 		ActiveSystems.Remove(System);
 	}
+}
+
+TArray<UCombatantComponent*> UOmegaGameplaySubsystem::RunCustomCombatantFilter(TSubclassOf<UCombatantFilter> FilterClass,
+	UCombatantComponent* Instigator, const TArray<UCombatantComponent*>& Combatants)
+{
+	TArray<UCombatantComponent*> OutCombatants;
+	if(FilterClass)
+	{
+		
+		OutCombatants = NewObject<UCombatantFilter>(this, FilterClass)->FilterCombatants(Instigator, Combatants);
+	}
+	return OutCombatants;
+}
+
+void UOmegaGameplaySubsystem::SetGlobalActorBinding(FName Binding, AActor* Actor)
+{
+	if(Actor)
+	{
+		GlobalActorBindingRefs.Add(Binding, Actor);
+	}
+}
+
+void UOmegaGameplaySubsystem::ClearGlobalActorBinding(FName Binding)
+{
+	GlobalActorBindingRefs.Remove(Binding);
+}
+
+AActor* UOmegaGameplaySubsystem::GetGlobalActorBinding(FName Binding)
+{
+	if(GlobalActorBindingRefs.FindOrAdd(Binding))
+	{
+		return GlobalActorBindingRefs.FindOrAdd(Binding);
+	}
+	return nullptr;
 }

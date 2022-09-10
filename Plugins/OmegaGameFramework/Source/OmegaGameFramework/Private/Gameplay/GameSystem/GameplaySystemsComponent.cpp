@@ -19,9 +19,19 @@ UGameplaySystemsComponent::UGameplaySystemsComponent()
 void UGameplaySystemsComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	Local_ActivateSystems();
+	
 	// ...
 	
+}
+
+void UGameplaySystemsComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if(!GetWorld()->bIsTearingDown)
+	{
+		Local_ShutdownSystems();
+	}
+	Super::EndPlay(EndPlayReason);
 }
 
 void UGameplaySystemsComponent::Local_ActivateSystems()
@@ -51,20 +61,4 @@ void UGameplaySystemsComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 }
 
 
-
-void UGameplaySystemsComponent::Activate(bool bReset)
-{
-	if(bReset)
-	{
-		Local_ShutdownSystems();
-	}
-	Local_ActivateSystems();
-	Super::Activate(bReset);
-}
-
-void UGameplaySystemsComponent::Deactivate()
-{
-	Local_ShutdownSystems();
-	Super::Deactivate();
-}
 
