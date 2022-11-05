@@ -8,6 +8,7 @@
 #include "Input/InputReceiverComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
+#include "OmegaGameManager.h"
 #include "Components/TimelineComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/OmegaPlayerSubsystem.h"
@@ -20,7 +21,6 @@ AOmegaAbility::AOmegaAbility()
 	SetActorHiddenInGame(true);
 	DefaultInputReceiver = CreateDefaultSubobject<UInputReceiverComponent>(TEXT("Default Input Reciever"));
 	bActivateOnStarted = true;
-
 	
 }
 
@@ -108,21 +108,46 @@ void AOmegaAbility::TryAssignControlInput(APawn* Pawn, AController* Controller)
 
 void AOmegaAbility::Native_AbilityActivated(UObject* Context)
 {
+	Local_TriggerEvents(EventsOnActivate);
 	if(GetAbilityActivationTimeline())
 	{
 		GetAbilityActivationTimeline()->Play();
 	}
 	Private_SetSoftTagsOnActor(ActiveActorOwnerTags, true);
+
+	if(bEnableInputOnActivation && GetAbilityOwnerPlayer())
+	{
+		EnableInput(GetAbilityOwnerPlayer());
+	}
 	AbilityActivated(Context);
 }
 
 void AOmegaAbility::Native_AbilityFinished(bool Cancelled)
 {
+	//EVENTS
+	Local_TriggerEvents(EventsOnFinish);
+	if(Cancelled)
+	{
+		Local_TriggerEvents(EventsOnCancel);
+	}
+	else
+	{
+		Local_TriggerEvents(EventsOnComplete);
+	}
+	
 	if(GetAbilityActivationTimeline())
 	{
 		GetAbilityActivationTimeline()->Reverse();
 	}
+	
 	Private_SetSoftTagsOnActor(ActiveActorOwnerTags, false);
+	
+	if(bEnableInputOnActivation && GetAbilityOwnerPlayer())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Some warning message") );
+		DisableInput(GetAbilityOwnerPlayer());
+	}
+	
 	AbilityFinished(Cancelled);
 }
 
@@ -197,9 +222,6 @@ void AOmegaAbility::Native_InputTrigger()
 		Native_Execute();
 	}
 }
-
-
-
 
 ////Local Activate / Deactivate
 
@@ -330,6 +352,14 @@ void AOmegaAbility::RecieveFinish(bool bCancel)
 		{
 			GetAbilityActivationTimeline()->Reverse();
 		}
+	}
+}
+
+void AOmegaAbility::Local_TriggerEvents(TArray<FName> Events)
+{
+	for(FName TempEv : Events)
+	{
+		GetWorld()->GetGameInstance()->GetSubsystem<UOmegaGameManager>()->FireGlobalEvent(TempEv, this);
 	}
 }
 	

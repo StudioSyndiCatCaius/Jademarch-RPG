@@ -7,6 +7,7 @@
 
 #include "OmegaGameplaySubsystem.h"
 #include "EnhancedInputSubsystems.h"
+#include "OmegaGameManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/OmegaPlayerSubsystem.h"
 
@@ -35,7 +36,7 @@ void AOmegaGameplaySystem::BeginPlay()
 	TArray <AActor*> FoundPlayers;
 	UGameplayStatics::GetAllActorsOfClass(this, APlayerController::StaticClass(), FoundPlayers);
 
-
+	GetGameInstance()->GetSubsystem<UOmegaGameManager>()->OnGlobalEvent.AddDynamic(this, &AOmegaGameplaySystem::OnGlobalEvent);
 	
 	for (AActor* TempActor : FoundPlayers)
 	{
@@ -70,7 +71,18 @@ void AOmegaGameplaySystem::BeginPlay()
 		Local_GrantAbilities(TempComb);
 	}
 	GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>()->OnCombatantRegistered.AddDynamic(this, &AOmegaGameplaySystem::Local_GrantAbilities);
+
+	//FLAGS
+	Local_SetFlagsActive(true);
 	
+}
+
+void AOmegaGameplaySystem::Local_SetFlagsActive(bool State)
+{
+	for(const auto LocalFlag : ActiveFlags)
+	{
+		GetGameInstance()->GetSubsystem<UOmegaGameManager>()->SetFlagActive(LocalFlag, State);
+	}
 }
 
 // Called every frame
@@ -82,6 +94,11 @@ void AOmegaGameplaySystem::Tick(float DeltaTime)
 
 void AOmegaGameplaySystem::Shutdown(FString Flag)
 {
+	if(bIsInShutdown)
+	{
+		return;
+	}
+	bIsInShutdown = true;
 	TArray <AActor*> FoundPlayers;
 	UGameplayStatics::GetAllActorsOfClass(this, APlayerController::StaticClass(), FoundPlayers);
 	
@@ -114,6 +131,9 @@ void AOmegaGameplaySystem::Shutdown(FString Flag)
 			TempComb->UngrantAbility(TempData.AbilityClass);
 		}	
 	}
+
+	//FLAGS
+	Local_SetFlagsActive(false);
 	
 	K2_DestroyActor();
 }

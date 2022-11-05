@@ -92,7 +92,7 @@ public:
 
 protected:
 	// Short summary of node's content - displayed over node as NodeInfoPopup
-	UFUNCTION(BlueprintImplementableEvent, Category = "FlowNode", meta = (DisplayName = "GetNodeDescription"))
+	UFUNCTION(BlueprintNativeEvent, Category = "FlowNode", meta = (DisplayName = "GetNodeDescription"))
 	FString K2_GetNodeDescription() const;
 
 	// Inherits Guid after graph node
@@ -101,6 +101,8 @@ protected:
 
 public:
 	void SetGuid(const FGuid NewGuid) { NodeGuid = NewGuid; }
+	
+	UFUNCTION(BlueprintPure, Category="FlowNode")
 	FGuid GetGuid() const { return NodeGuid; }
 
 	UFUNCTION(BlueprintPure, Category = "FlowNode")
@@ -156,10 +158,10 @@ public:
 #endif
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent, Category = "FlowNode", meta = (DisplayName = "CanUserAddInput"))
+	UFUNCTION(BlueprintNativeEvent, Category = "FlowNode", meta = (DisplayName = "CanUserAddInput"))
 	bool K2_CanUserAddInput() const;
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "FlowNode", meta = (DisplayName = "CanUserAddOutput"))
+	UFUNCTION(BlueprintNativeEvent, Category = "FlowNode", meta = (DisplayName = "CanUserAddOutput"))
 	bool K2_CanUserAddOutput() const;
 
 //////////////////////////////////////////////////////////////////////////
@@ -255,7 +257,7 @@ protected:
 
 	// Trigger Output Pin
 	UFUNCTION(BlueprintCallable, Category = "FlowNode", meta = (HidePin = "bForcedActivation"))
-	void TriggerOutput(const FName& PinName, const bool bFinish = false, const bool bForcedActivation = false);
+	void TriggerOutput(FName PinName, const bool bFinish = false, const bool bForcedActivation = false);
 
 	void TriggerOutput(const FString& PinName, const bool bFinish = false);
 	void TriggerOutput(const FText& PinName, const bool bFinish = false);

@@ -95,7 +95,7 @@ public:
 	bool HighlightOnSelect;
 	
 	// Read Only
-	UPROPERTY(BlueprintReadOnly, Category = "Entry")
+	UPROPERTY()
 	TArray<UDataWidget*> Entries;
 
 	UPROPERTY(meta = (BindWidget))
@@ -123,6 +123,9 @@ public:
 	UPROPERTY()
 	UDataWidget* HoveredEntry;
 
+	UFUNCTION(BlueprintPure, Category = "Ω|Widget|DataList")
+	TArray<UDataWidget*> GetEntries();
+	
 	//Access Entires
 	UFUNCTION(BlueprintCallable, Category = "Ω|Widget|DataList")
 	void HoverEntry(int32 Index);
@@ -199,6 +202,16 @@ protected:
 	UFUNCTION()
 	void NativeEntityHighlight(UDataWidget* DataWidget, bool bIsHighlighted);
 
+	//#####################################################
+	// HIGHLIGHT
+	//#####################################################
+
+	UFUNCTION(BlueprintCallable, Category="DataWidget|Entity")
+	void SetEntryHighlighted(int32 Index, bool bHighlighted);
+
+	UFUNCTION(BlueprintCallable, Category="DataWidget|Entity")
+	void SetAllEntriesHighlighted(bool bHighlighted);
+	
 	//Delegate Props
 
 	UPROPERTY(BlueprintAssignable)

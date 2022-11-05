@@ -118,9 +118,14 @@ void FOmegaEditor::StartupModule()
 	ThumnbailNames.Add(TEXT("Action"));
 	ThumnbailNames.Add(TEXT("OmegaLevelingAsset"));
 	ThumnbailNames.Add(TEXT("LevelingComponent"));
-
+	ThumnbailNames.Add(TEXT("EquipmentComponent"));
+	ThumnbailNames.Add(TEXT("DataAssetCollectionComponent"));
+	ThumnbailNames.Add(TEXT("CombatantExtensionComponent"));
+	
 	ThumnbailNames.Add(TEXT("OmegaDataItem"));
 	ThumnbailNames.Add(TEXT("OmegaDataTrait"));
+	
+	ThumnbailNames.Add(TEXT("FlowComponent"));
 	
 	ThumnbailNames.Add(TEXT("InstanceActorComponent"));
 	ThumnbailNames.Add(TEXT("OmegaInstanceActor"));

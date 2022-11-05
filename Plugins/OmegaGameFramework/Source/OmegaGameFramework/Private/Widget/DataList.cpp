@@ -191,6 +191,19 @@ UDataWidget* UDataList::AddedCustomEntryToList(FCustomAssetData EntryData, FStri
 	return AddAssetToList(TempDataObj, Flag);
 }
 
+TArray<UDataWidget*> UDataList::GetEntries()
+{
+	TArray<UDataWidget*> OutEntries;
+	for(auto* TempEntry : Entries)
+	{
+		if(TempEntry)
+		{
+			OutEntries.Add(TempEntry);
+		}
+	}
+	return OutEntries;
+}
+
 void UDataList::HoverEntry(int32 Index)
 {
 	if(GetEntry(Index))
@@ -494,4 +507,23 @@ void UDataList::NativeEntityHighlight(UDataWidget* DataWidget, bool bIsHighlight
 {
 	
 	OnEntryHighlighted.Broadcast(DataWidget, DataWidget->GetAssetLabel(), DataWidget->ReferencedAsset, Entries.Find(DataWidget), bIsHighlighted);
+}
+
+void UDataList::SetEntryHighlighted(int32 Index, bool bHighlighted)
+{
+	if(GetEntries()[Index])
+	{
+		GetEntries()[Index]->SetHighlighted(bHighlighted);
+	}
+}
+
+void UDataList::SetAllEntriesHighlighted(bool bHighlighted)
+{
+	for(auto* TempEntry : GetEntries())
+	{
+		if(TempEntry)
+		{
+			TempEntry->SetHighlighted(bHighlighted);
+		}
+	}
 }

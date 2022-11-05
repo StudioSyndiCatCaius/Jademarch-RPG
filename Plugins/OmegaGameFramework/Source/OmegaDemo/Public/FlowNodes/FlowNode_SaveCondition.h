@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Nodes/FlowNode.h"
 #include "Save/OmegaSaveSubsystem.h"
-#include "UObject/Object.h"
 #include "FlowNode_SaveCondition.generated.h"
 
 /**

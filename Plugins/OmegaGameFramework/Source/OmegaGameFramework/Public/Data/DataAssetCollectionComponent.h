@@ -29,7 +29,7 @@ protected:
 	UFUNCTION()
 	bool NativeRemoveAsset(UPrimaryDataAsset* Asset);
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, Category="Equipment", DisplayName="Collected Assets")
 	TMap<UPrimaryDataAsset*, int32> CollectionMap;
 
 public:	

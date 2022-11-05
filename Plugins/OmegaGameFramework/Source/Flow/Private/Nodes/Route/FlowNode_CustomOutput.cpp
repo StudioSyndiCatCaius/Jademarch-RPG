@@ -3,6 +3,7 @@
 #include "Nodes/Route/FlowNode_CustomOutput.h"
 
 #include "FlowAsset.h"
+#include "FlowSubsystem.h"
 #include "Nodes/Route/FlowNode_SubGraph.h"
 
 UFlowNode_CustomOutput::UFlowNode_CustomOutput(const FObjectInitializer& ObjectInitializer)
@@ -22,6 +23,8 @@ void UFlowNode_CustomOutput::ExecuteInput(const FName& PinName)
 	{
 		GetFlowAsset()->TriggerCustomOutput(EventName);
 	}
+	
+	GetFlowSubsystem()->Native_EndFlow(GetFlowAsset(), EventName, "");
 }
 
 #if WITH_EDITOR

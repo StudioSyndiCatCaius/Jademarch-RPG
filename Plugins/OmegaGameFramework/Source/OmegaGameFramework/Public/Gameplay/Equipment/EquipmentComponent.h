@@ -30,7 +30,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, Category="Equipment")
 	TMap<FString, UPrimaryDataAsset*> EquippedItems;
 
 	UFUNCTION(BlueprintPure, Category="Equipment", meta=(CompactNodeTitle="Equipment"))

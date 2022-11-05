@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FlowAssetTrait.h"
 #include "FlowSave.h"
 #include "FlowTypes.h"
 #include "Gameplay/GameplayTagsInterface.h"
@@ -218,7 +219,7 @@ public:
 	virtual void PreloadNodes();
 
 	virtual void PreStartFlow();
-	virtual void StartFlow();
+	virtual void StartFlow(UGameInstance* GameInstance, const bool Override, const FGuid NodeGuid, const FName InputName);
 	
 	virtual void FinishFlow(const EFlowFinishPolicy InFinishPolicy);
 
@@ -245,6 +246,12 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Flow")
 	bool IsActive() const { return ActiveNodes.Num() > 0; }
 
+	UFUNCTION(BlueprintPure, Category = "Flow")
+	TArray<UFlowNode*> GetAllNodes();
+	
+	UFUNCTION(BlueprintPure, Category = "Flow")
+	UFlowNode* GetNodeFromGuid(FGuid Guid);
+	
 	// Returns nodes that have any work left, not marked as Finished yet
 	UFUNCTION(BlueprintPure, Category = "Flow")
 	TArray<UFlowNode*> GetActiveNodes() const { return ActiveNodes; }
@@ -287,4 +294,10 @@ public:
 
 	virtual FGameplayTag GetObjectGameplayCategory_Implementation() override;
 	virtual FGameplayTagContainer GetObjectGameplayTags_Implementation() override;
+
+	//--------------------------------------------------------//
+	// TRAITS
+	//--------------------------------------------------------//
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced, Category="Traits")
+	TArray<UFlowAssetTrait*> Traits;
 };

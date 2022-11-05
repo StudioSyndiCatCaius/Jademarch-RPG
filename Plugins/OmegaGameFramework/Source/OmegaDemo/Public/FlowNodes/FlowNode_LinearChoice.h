@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Choice/OmegaLinearChoiceInstance.h"
 #include "Nodes/FlowNode.h"
-#include "UObject/Object.h"
 #include "FlowNode_LinearChoice.generated.h"
 
 /**
@@ -31,6 +30,6 @@ public:
 	void LocalChoiceSelect(UOmegaLinearChoice* Choice, int32 Index);
 
 	
-	virtual bool CanUserAddOutput() const override;
+	virtual bool K2_CanUserAddOutput_Implementation() const override;
 	virtual void ExecuteInput(const FName& PinName) override;
 };

@@ -3,6 +3,13 @@
 
 #include "Save/OmegaSaveBase.h"
 
+void UOmegaSaveBase::Local_OnLoaded()
+{
+	
+}
+
+
+
 //bool
 void UOmegaSaveBase::SetSaveProperty_Bool(const FString& Name, bool Value)
 {

@@ -8,7 +8,7 @@
 
 class UCombatantComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCombatantSetInGroup, UCombatantComponent*, Combatant, bool, InBroup);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCombatantSetInGroup, UCombatantComponent*, Combatant, bool, InGroup);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class OMEGAGAMEFRAMEWORK_API UCombatantGroupComponent : public UActorComponent
@@ -34,8 +34,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CombatantGroup")
 	FString GroupName;
 	
-	UFUNCTION(BlueprintCallable, Category="Combatant|Gr0oup")
-	void SetCombatantInGroup(UCombatantComponent* Combatant, bool InGroup);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CombatantGroup")
+	int32 MaxGroupMembers;
+
+	UFUNCTION(BlueprintPure, Category="Combatant|Gr0oup")
+	bool IsGroupFull();
+	
+	UFUNCTION(BlueprintCallable, Category="Combatant|Group")
+	bool SetCombatantInGroup(UCombatantComponent* Combatant, bool InGroup);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnCombatantSetInGroup OnCombatantSetInGroup;

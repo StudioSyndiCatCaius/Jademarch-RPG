@@ -7,6 +7,7 @@
 #include "OmegaGameplayEffect.h"
 #include "Gameplay/CombatantComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "TimerManager.h"
 #include "Kismet/KismetTextLibrary.h"
 
 void UOmegaEffectPopup::NativeConstruct()
@@ -18,6 +19,8 @@ void UOmegaEffectPopup::NativeConstruct()
 		GetDamageText()->SetText(OwningEffect->GetTriggeredPopupText());
 		GetDamageText()->SetColorAndOpacity(OwningEffect->GetTriggeredPopupColor());
 	}
+	CurrentPosition = InitPosition;
+	SetPositionInViewport(InitPosition);
 	
 	GetWorld()->GetTimerManager().SetTimer(LifetimeTimer, this, &UOmegaEffectPopup::RemoveFromParent, GetPopupLifetime(), false);
 }
@@ -25,7 +28,7 @@ void UOmegaEffectPopup::NativeConstruct()
 void UOmegaEffectPopup::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-
+	
 	CurrentPosition = UKismetMathLibrary::Vector2DInterpTo(CurrentPosition, InitPosition+GetTargetViewportPosition(), InDeltaTime, 1/GetPopupLifetime());
 	SetPositionInViewport(CurrentPosition);
 	

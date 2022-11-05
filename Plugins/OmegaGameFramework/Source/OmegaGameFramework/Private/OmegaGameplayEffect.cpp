@@ -2,9 +2,12 @@
 
 
 #include "OmegaGameplayEffect.h"
-#include "TimerManager.h"
-#include "Kismet/KismetSystemLibrary.h"
 
+#include "OmegaAttribute.h"
+#include "TimerManager.h"
+#include "Gameplay/CombatantComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetTextLibrary.h"
 
 
 // Sets default values
@@ -21,7 +24,7 @@ void AOmegaGameplayEffect::BeginPlay()
 	Super::BeginPlay();
 
 	//Construct DamageFormula Object
-	LocalFormula = NewObject<UDamageFormula>(this, DamageFormula, FName("LocalFormula"));
+	//LocalFormula = NewObject<UDamageFormula>(this, DamageFormula, FName("LocalFormula"));
 
 	//Select What Lifetime to use.
 	switch (EffectLifetime)
@@ -48,9 +51,9 @@ void AOmegaGameplayEffect::BeginPlay()
 		EffectContext = GetOwner();
 	}
 
+	Local_RemoveEffects(RemoveEffectsOnApplied);
 	
 	EffectBeginPlay(EffectContext);
-
 }
 
 //Trigger the Effect
@@ -65,10 +68,14 @@ void AOmegaGameplayEffect::LifetimeEnd()
 //Run Damage Calculation
 float AOmegaGameplayEffect::CalculateDamageValue()
 {
-	float LocalDamage;
-	LocalFormula->GetDamageAmount(CombatantInstigator, TargetedCombatant, LocalDamage);
-	LocalDamage = LocalDamage * Power;
-	return LocalDamage;
+	if(LocalFormula)
+	{
+		float LocalDamage;
+		LocalFormula->GetDamageAmount(CombatantInstigator, TargetedCombatant, LocalDamage);
+		LocalDamage = LocalDamage * Power;
+		return LocalDamage;
+	}
+	return 0;
 }
 
 // Called every frame
@@ -88,20 +95,42 @@ void AOmegaGameplayEffect::Tick(float DeltaTime)
 //Trigger the effects and destory this Effect Actor.
 void AOmegaGameplayEffect::TriggerEffect()
 {
-	EffectApplied(CalculateDamageValue());
-	OnEffectTriggered.Broadcast(this, CalculateDamageValue());
-	UE_LOG(LogTemp, Display, TEXT("Applied Effect"));
+	float DamageVal = CalculateDamageValue();
 
+	// Damage Attributes //
+	if(EffectedAttribute)
+	{
+		if(AttrbuteEffectType == EOmegaEffectType::OET_Heal)
+		{
+			DamageVal = DamageVal*-1;
+		}
+		if(TargetedCombatant)
+		{
+			TargetedCombatant->ApplyAttributeDamage(EffectedAttribute, DamageVal, CombatantInstigator, EffectContext);
+		}
+	}
+	
 	//--Popup--//
 	if(bShowPopupOnTrigger)
 	{
 		
 		UOmegaEffectPopup* LocalPopup = Cast<UOmegaEffectPopup>(CreateWidget(GetWorld(), Local_GetPopupClass()));
 		LocalPopup->OwningEffect = this;
-
+		if(TargetedCombatant)
+		{
+			LocalPopup->GetOwningPlayer()->ProjectWorldLocationToScreen(TargetedCombatant->GetOwner()->GetActorLocation(), LocalPopup->InitPosition);
+		}
+		
 		// After setting everything, add to viewport
 		LocalPopup->AddToViewport();
 	}
+
+	//Remove Effects
+	Local_RemoveEffects(RemoveEffectsOnTrigger);
+	
+	EffectApplied(DamageVal);
+	OnEffectTriggered.Broadcast(this, DamageVal);
+	UE_LOG(LogTemp, Display, TEXT("Applied Effect"));
 	
 	if(EffectLifetime == EEffectLifetime::EffectLifetime_OnTrigger)
 	{
@@ -120,4 +149,27 @@ FGameplayTag AOmegaGameplayEffect::GetObjectGameplayCategory_Implementation()
 FGameplayTagContainer AOmegaGameplayEffect::GetObjectGameplayTags_Implementation()
 {
 	return EffectTags;
+}
+
+FSlateColor AOmegaGameplayEffect::GetTriggeredPopupColor_Implementation()
+{
+	FSlateColor NewColor = FLinearColor(1.0,1.0,1.0);
+	if(EffectedAttribute)
+	{
+		switch (AttrbuteEffectType) {
+			case EOmegaEffectType::OET_Damage:
+				NewColor = EffectedAttribute->DamageColor;
+				break;
+			case EOmegaEffectType::OET_Heal:
+				NewColor = EffectedAttribute->AttributeColor;
+				break;
+			default: ;
+		}
+	}
+	return NewColor;
+}
+
+FText AOmegaGameplayEffect::GetTriggeredPopupText_Implementation()
+{
+	return UKismetTextLibrary::Conv_FloatToText(CalculateDamageValue(), ERoundingMode::FromZero);
 }

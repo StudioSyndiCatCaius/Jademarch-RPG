@@ -34,7 +34,10 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="General", DisplayName="Name")
 	FText DisplayName;
-
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="General", AdvancedDisplay)
+	FString CustomLabel;
+	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="General")
 	FSlateBrush Icon;
 	
@@ -46,7 +49,13 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="General", AdvancedDisplay)
 	int32 SortOrder;
-	//Tags
+	
+	//###############################################################################
+	// Gameplay Tags
+	//###############################################################################
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Tags", AdvancedDisplay)
+	FGameplayTag GameplayID;
+	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Tags")
 	FGameplayTag GameplayCategory;
 
@@ -62,7 +71,9 @@ public:
 	UFUNCTION(BlueprintPure, Category="OmegaDataItem|Tags", meta=(Keywords="Gameplay, Tag"))
 	bool IsObjectAccepted(const FString& Query, UObject* Object);
 	
-	//Traits
+	//###############################################################################
+	// Traits
+	//###############################################################################
 	UPROPERTY(EditAnywhere, Category="Traits", AdvancedDisplay)
 	TArray<UOmegaDataTraitCollection*> TraitCollections;
 	
@@ -110,7 +121,8 @@ FGameplayTag GetObjectGameplayCategory();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Data|General")
 	void GetGeneralDataText(const FString& Label, const class UObject* Context,	FText& Name, FText& Description);
 	virtual void GetGeneralDataText_Implementation(const FString& Label, const class UObject* Context, FText& Name, FText& Description);
-
+	
+	virtual void GetGeneralAssetLabel_Implementation(FString& Label) override;
 	//Images
 	//UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Data|General")
 	virtual void GetGeneralDataImages_Implementation(const FString& Label, const class UObject* Context, class UTexture2D*& Texture, class UMaterialInterface*& Material, FSlateBrush& Brush);
@@ -134,5 +146,22 @@ FGameplayTag GetObjectGameplayCategory();
 	FString GetSoftProperty_String(const FString& Property);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="SoftPropertries", meta=(CompactNodeTitle="object"))
 	UObject* GetSoftProperty_Object(const FString& Property);
+
+	UFUNCTION()
+	TMap<FString, FString> DEBUG_GetProperties();
 	
+	//Item Properties
+	FString Local_GetItemProperty(const FString& Property);
+	TArray<FString> Local_GetItemPropertyList(const FString& Property);
+
+	UFUNCTION()
+	FString GetItemProperty_String(const FString& Property);
+	/*
+	UFUNCTION(BlueprintPure, Category="DataItem|Properties")
+	int32 GetItemProperty_Int32(const FString& Property);
+	UFUNCTION(BlueprintPure, Category="DataItem|Properties")
+	float GetItemProperty_Float(const FString& Property);
+	UFUNCTION(BlueprintPure, Category="DataItem|Properties")
+	bool GetItemProperty_Bool(const FString& Property);
+	*/
 };

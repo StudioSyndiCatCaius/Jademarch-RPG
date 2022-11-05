@@ -3,8 +3,8 @@
 
 #include "Input/InputReceiverComponent.h"
 
-#include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
 
 // Sets default values for this component's properties
@@ -22,7 +22,7 @@ UInputReceiverComponent::UInputReceiverComponent()
 void UInputReceiverComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	OverrideInputOwner(GetOwner());
 
 	//Local_InputAction = NewObject<UInputAction>(this, UInputAction::StaticClass());
@@ -103,7 +103,8 @@ void UInputReceiverComponent::Native_Ongoing()
 void UInputReceiverComponent::OnOwningControllerChange(APawn* Pawn, AController* OldController, AController* NewController)
 {
 	UE_LOG(LogTemp, Display, TEXT("Attempted Input Reciever Owner Change (on new controller)") );
-	OverrideInputOwner(Pawn);
+	AActor* LocalActorRef = Pawn;
+	OverrideInputOwner(LocalActorRef);
 
 	if(Cast<APlayerController>(OldController))
 	{

@@ -8,6 +8,7 @@
 #include "GameplayTagContainer.h"
 #include "DataInterface_General.h"
 #include "Gameplay/GameplayTagsInterface.h"
+#include "Preferences/GamePreference.h"
 #include "UObject/SoftObjectPath.h"
 
 #include "OmegaSaveBase.generated.h"
@@ -33,6 +34,10 @@ public:
 
 	UPROPERTY()
 	FString SaveJsonData;
+
+
+	UFUNCTION()
+	void Local_OnLoaded();
 	
 	
 	//GamePreferences
@@ -46,6 +51,7 @@ public:
 	TMap<class UGamePreferenceTag*, FGameplayTag> TagPrefs;
 	UPROPERTY()
 	TMap<class UGamePreferenceInt*, int32> IntPrefs;
+	
 	
 	//Tags
 	UPROPERTY(BlueprintReadOnly, DisplayName="Save State", Category="Ω|SaveGame")

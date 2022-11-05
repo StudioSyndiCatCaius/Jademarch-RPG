@@ -9,8 +9,8 @@
 #include "CombatantExtensionComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable, BlueprintType )
-class OMEGAGAMEFRAMEWORK_API UCombatantExtensionComponent : public UActorComponent, public IDataInterface_AttributeModifier, public  IDataInterface_DamageModifier
+UCLASS( ClassGroup=("Combat"), meta=(BlueprintSpawnableComponent), Blueprintable, BlueprintType )
+class OMEGAGAMEFRAMEWORK_API UCombatantExtensionComponent : public UActorComponent, public IDataInterface_AttributeModifier, public  IDataInterface_DamageModifier, public IDataInterface_SkillSource
 {
 	GENERATED_BODY()
 
@@ -27,10 +27,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(EditAnywhere, Category="Combatant")
+	UPROPERTY(EditDefaultsOnly, Category="Combatant")
 	bool bIsAttributeModifier;
-	UPROPERTY(EditAnywhere, Category="Combatant")
+	UPROPERTY(EditDefaultsOnly, Category="Combatant")
 	bool bIsDamageModifier;
+	UPROPERTY(EditDefaultsOnly, Category="Combatant")
+	bool bIsSkillSource;
 	
 	UPROPERTY(BlueprintReadOnly, Category="Combatant", DisplayName="Combatant")
 	UCombatantComponent* CombatantRef = nullptr;

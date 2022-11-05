@@ -11,6 +11,10 @@
 
 class UFlowAsset;
 class UFlowSubsystem;
+class UFlowNode;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnFlowFinish, FName, Output, const FString&, Flag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnNodeEntered, UFlowNode*, Node, FName, Input);
 
 USTRUCT()
 struct FNotifyTagReplication
@@ -64,6 +68,13 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_RemovedIdentityTags)
 	FGameplayTagContainer RemovedIdentityTags;
 
+protected:
+
+	UFUNCTION()
+	void Local_OnFlowEnd(UFlowAsset* FlowAsset, FName Output, const FString& Flag);
+	UFUNCTION()
+	void Local_OnFlowEnter(UFlowAsset* FlowAsset, UFlowNode* Node, FName Input);
+	
 public:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -80,6 +91,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Flow")
 	void RemoveIdentityTags(FGameplayTagContainer Tags, const EFlowNetMode NetMode = EFlowNetMode::Authority);
 
+	UPROPERTY(BlueprintAssignable)
+	FOnFlowFinish OnFlowFinish;
+	UPROPERTY(BlueprintAssignable)
+	FOnNodeEntered OnNodeEntered;
+	
 private:
 	UFUNCTION()
 	void OnRep_AddedIdentityTags();
@@ -190,8 +206,8 @@ public:
 	
 	// This will instantiate Flow Asset assigned on this component.
 	// Created Flow Asset instance will be a "root flow", as additional Flow Assets can be instantiated via Sub Graph node
-	UFUNCTION(BlueprintCallable, Category = "RootFlow")
-	void StartRootFlow();
+	UFUNCTION(BlueprintCallable, Category = "RootFlow", meta=(AdvancedDisplay="bOverrideStartingNode, StartingNode, InputName"))
+	void StartRootFlow(const bool bOverrideStartingNode, const FGuid StartingNode, const FName InputName);
 
 	// This will destroy instantiated Flow Asset - created from asset assigned on this component.
 	UFUNCTION(BlueprintCallable, Category = "RootFlow")

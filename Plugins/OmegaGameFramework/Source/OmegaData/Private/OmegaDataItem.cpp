@@ -174,8 +174,17 @@ void UOmegaDataItem::GetGeneralDataText_Implementation(const FString& Label, con
 	Description = FText::FromString(TempDesc);
 }
 
+void UOmegaDataItem::GetGeneralAssetLabel_Implementation(FString& Label)
+{
+	if(CustomLabel.IsEmpty())
+	{
+		Label = DisplayName.ToString();
+	}
+	Label = CustomLabel;
+}
+
 void UOmegaDataItem::GetGeneralDataImages_Implementation(const FString& Label, const UObject* Context,
-	UTexture2D*& Texture, UMaterialInterface*& Material, FSlateBrush& Brush)
+                                                         UTexture2D*& Texture, UMaterialInterface*& Material, FSlateBrush& Brush)
 {
 	Brush = Icon;
 }
@@ -208,6 +217,40 @@ TArray<FOmegaEffectContainer> UOmegaDataItem::GetOmegaEffects_Implementation()
 	}
 	return OutEffects;
 }
+
+TMap<FString, FString> UOmegaDataItem::DEBUG_GetProperties()
+{
+	TMap<FString, FString> LocalStrings;
+	GetNativePropertyValues(LocalStrings, EPropertyPortFlags::PPF_DebugDump);
+	return LocalStrings;
+}
+
+FString UOmegaDataItem::Local_GetItemProperty(const FString& Property)
+{
+	TMap<FString, FString> LocalStrings;
+	for(const auto* TempTrait : GetAllValidTraits())
+	{
+		TempTrait->GetNativePropertyValues(LocalStrings, 0x00000800);
+		if(LocalStrings.Contains(Property))
+		{
+			return LocalStrings.FindOrAdd(Property);
+		}
+	}
+	return "";
+}
+
+TArray<FString> UOmegaDataItem::Local_GetItemPropertyList(const FString& Property)
+{
+	TArray<FString> OutProps;
+
+	return OutProps;
+}
+
+FString UOmegaDataItem::GetItemProperty_String(const FString& Property)
+{
+	return Local_GetItemProperty(Property);
+}
+
 
 //PROPETIES
 

@@ -2,6 +2,7 @@
 
 
 #include "FlowNodes/FlowNode_SaveCondition.h"
+#include "FlowTypes.h"
 
 UFlowNode_SaveCondition::UFlowNode_SaveCondition()
 {
@@ -11,7 +12,7 @@ UFlowNode_SaveCondition::UFlowNode_SaveCondition()
 	OutputPins.Add(FFlowPin(TEXT("True")));
 	OutputPins.Add(FFlowPin(TEXT("False")));
 	
-	NodeStyle = EFlowNodeStyle::Condition;
+	//NodeStyle = EFlowNodeStyle::Condition;
 #if WITH_EDITOR
 	Category = TEXT("GameFlow");
 #endif
@@ -19,8 +20,7 @@ UFlowNode_SaveCondition::UFlowNode_SaveCondition()
 
 void UFlowNode_SaveCondition::ExecuteInput(const FName& PinName)
 {
-	bool LocalSuccess = GetWorld()->GetGameInstance()->GetSubsystem<UOmegaSaveSubsystem>()->CustomSaveConditionsMet(Conditions);
-	if(LocalSuccess)
+	if(bool LocalSuccess = GetWorld()->GetGameInstance()->GetSubsystem<UOmegaSaveSubsystem>()->CustomSaveConditionsMet(Conditions))
 	{
 		TriggerOutput(FName("True"));
 	}

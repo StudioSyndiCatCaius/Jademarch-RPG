@@ -30,6 +30,16 @@ public:
 
 	virtual void Initialize(FSubsystemCollectionBase& Colection) override;
 
+	//////////////////
+	/// Gameplay Systems
+	/////////////////
+
+	UFUNCTION()
+	void NativeRemoveSystem(AOmegaGameplaySystem* System);
+
+	UPROPERTY()
+	TArray<class AOmegaGameplaySystem*> ActiveSystems;
+	
 	UFUNCTION(BlueprintCallable, Category = "OmegaGameplaySubsystem", meta=(AdvancedDisplay = "Context, Flag"))
 	AOmegaGameplaySystem* ActivateGameplaySystem(class TSubclassOf<AOmegaGameplaySystem> Class, class UObject* Context, FString Flag);
 
@@ -38,6 +48,23 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "OmegaGameplaySubsystem", meta=(DeterminesOutputType = "Class"))
 	class AOmegaGameplaySystem* GetGameplaySystem(class TSubclassOf<AOmegaGameplaySystem> Class, bool& bIsActive);
+
+	UFUNCTION(BlueprintPure, Category = "OmegaGameplaySubsystem")
+	TArray<AOmegaGameplaySystem*> GetActiveGameplaySystems();
+
+	UFUNCTION(BlueprintPure, Category = "OmegaGameplaySubsystem")
+	TArray<AOmegaGameplaySystem*> GetActiveGameplaySystemsWithInterface(TSubclassOf<UInterface> Interface);
+
+	UFUNCTION(BlueprintPure, Category = "OmegaGameplaySubsystem")
+	bool IsSystemTagBlocked(FGameplayTagContainer Tags);
+	
+	UFUNCTION(BlueprintPure, Category = "OmegaGameplaySubsystem")
+	bool IsSystemTagActive(FGameplayTagContainer Tags);
+
+	UFUNCTION(BlueprintPure, Category = "OmegaGameplaySubsystem")
+	TArray<AOmegaGameplaySystem*> GetActiveSystemsWithTags(FGameplayTagContainer Tags);
+	
+	//PLAYER
 	
 	UFUNCTION(BlueprintPure, Category = "OmegaGameplaySubsystem")
 	APlayerController* GetPlayerController(int32 Index);
@@ -55,11 +82,7 @@ public:
 	UFUNCTION(BlueprintPure, Category="Combat")
 	TArray<UCombatantComponent*> GetAllCombatants();
 	
-	UFUNCTION()
-	void NativeRemoveSystem(AOmegaGameplaySystem* System);
-
-	UPROPERTY()
-	TArray<class AOmegaGameplaySystem*> ActiveSystems;
+	
 
 	UPROPERTY(BlueprintAssignable)
 	FOnCombatantRegistered OnCombatantRegistered;

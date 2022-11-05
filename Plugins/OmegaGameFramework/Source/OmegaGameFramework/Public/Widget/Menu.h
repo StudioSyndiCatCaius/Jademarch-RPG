@@ -22,6 +22,7 @@ class OMEGAGAMEFRAMEWORK_API UMenu : public UUserWidget, public IWidgetInterface
 
 protected:
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
+	//virtual void OnAnimationFinishedPlaying(UUMGSequencePlayer& Player) override;
 	virtual void NativeConstruct() override;
 	
 public:
@@ -34,6 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ω|Widget|Menu", meta=(AdvancedDisplay="Tags, Flag"))
 		void CloseMenu(FGameplayTagContainer Tags, const FString& Flag);
 
+	UPROPERTY()
+	bool bIsClosing;
+	
 	void Native_CompleteClose();
 
 	UPROPERTY()
@@ -61,9 +65,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animations")
 	bool ReverseCloseAnimation=true;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Animations", AdvancedDisplay)
+	UPROPERTY(EditAnywhere, Category = "Animations", AdvancedDisplay)
 	ESlateVisibility VisibilityOnOpen = ESlateVisibility::SelfHitTestInvisible;
-	UPROPERTY(EditDefaultsOnly, Category = "Animations", AdvancedDisplay)
+	UPROPERTY(EditAnywhere, Category = "Animations", AdvancedDisplay)
 	ESlateVisibility VisibilityOnClose = ESlateVisibility::Collapsed;
 
 	UPROPERTY()

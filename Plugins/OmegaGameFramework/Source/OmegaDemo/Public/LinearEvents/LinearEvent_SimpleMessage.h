@@ -7,6 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "Event/OmegaLinearEvent.h"
 #include "Gameplay/GameplayTagsInterface.h"
+#include "Nodes/FlowNode.h"
 #include "UObject/Object.h"
 #include "LinearEvent_SimpleMessage.generated.h"
 
@@ -14,23 +15,44 @@ class UOmegaDataItem;
 
 // Fires the GlobalEvent "SimpleMessage" with this event as the context. Uses GetGeneralDataTexts to get event text. Finishes on GlobalEvent "EndMessage";
 UCLASS(DisplayName="Event (Simple Message)")
-class OMEGADEMO_API ULinearEvent_SimpleMessage : public UOmegaLinearEvent, public IDataInterface_General, public IGameplayTagsInterface
+class OMEGADEMO_API ULinearEvent_SimpleMessage : public UOmegaLinearEvent, public IDataInterface_General
 {
 	GENERATED_BODY()
 
 public:
+	virtual FString GetLogString_Implementation() const override;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category="Event", meta=(ExposeOnSpawn="true"))
 	UOmegaDataItem* Instigator;
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category="Event", meta=(MultiLine, ExposeOnSpawn="true"))
 	FText Message;
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category="Event", meta=(ExposeOnSpawn="true"))
-	FGameplayTagContainer Tags;
+
 	
 	virtual void GetGeneralDataText_Implementation(const FString& Label, const UObject* Context, FText& Name, FText& Description) override;
-	virtual FGameplayTagContainer GetObjectGameplayTags_Implementation() override;
 	virtual void Native_Begin() override;
 
 	UFUNCTION()
 	void LocalGEvent(FName Event, UObject* Context);
+};
+
+UCLASS(DisplayName="Simple Message")
+class OMEGADEMO_API UFlowNode_SimpleMessage : public UFlowNode
+{
+	GENERATED_BODY()
+
+public:
+	UFlowNode_SimpleMessage();
+
+	virtual void ExecuteInput(const FName& PinName) override;
+	
+	virtual FString K2_GetNodeDescription_Implementation() const override;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category="Message")
+	UOmegaDataItem* Instigator;
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category="Message")
+	FText Message;
+
+	
+	UFUNCTION()
+	void LocalFinish(const FString& Flag);
 };

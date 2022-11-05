@@ -6,7 +6,9 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "OmegaGameplaySubsystem.h"
 #include "GameplayTagContainer.h"
+#include "Gameplay/OmegaGameplayModule.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/OmegaInputMode.h"
 #include "OmegaGameFrameworkBPLibrary.generated.h"
 
 class APlayerController;
@@ -54,6 +56,8 @@ class UOmegaGameFrameworkBPLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintPure, Category="Ω|Player")
 	static AActor* GetPlayerMouseOverActor(APlayerController* Player, ETraceTypeQuery TraceChannel, float TraceSphereRadius);
 
+	UFUNCTION(BlueprintCallable, Category="Ω|Player", meta = (WorldContext = "WorldContextObject", AdvancedDisplay="Player"))
+	static void SetPlayerCustomInputMode(const UObject* WorldContextObject, APlayerController* Player,  UOmegaInputMode* InputMode);
 
 	//------- ACTOR BINDING --------//
 	
@@ -63,5 +67,14 @@ class UOmegaGameFrameworkBPLibrary : public UBlueprintFunctionLibrary
 	static void ClearGlobalActorBinding(const UObject* WorldContextObject, FName Binding);
 	UFUNCTION(BlueprintPure, Category="Omega Gameplay", meta = (WorldContext = "WorldContextObject"))
 	static AActor* GetGlobalActorBinding(const UObject* WorldContextObject, FName Binding);
+
+	//------- QuickGet --------//
+
+	//Get an Active Gameplay System by Class
+	UFUNCTION(BlueprintPure, Category="Omega Gameplay", meta = (WorldContext = "WorldContextObject", DeterminesOutputType="SystemClass"))
+	static AOmegaGameplaySystem* GetActiveGameplaySystem(const UObject* WorldContextObject, TSubclassOf<AOmegaGameplaySystem> SystemClass);
 	
+	//Get an Active Gameplay Module by Class
+	UFUNCTION(BlueprintPure, Category="Omega Gameplay", meta = (WorldContext = "WorldContextObject", DeterminesOutputType="ModuleClass"))
+	static UOmegaGameplayModule* GetGameplayModule(const UObject* WorldContextObject, TSubclassOf<UOmegaGameplayModule> ModuleClass);
 };

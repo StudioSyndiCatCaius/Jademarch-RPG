@@ -16,8 +16,8 @@ class UFlowNode_SubGraph;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSimpleFlowEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimpleFlowComponentEvent, UFlowComponent*, Component);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTaggedFlowComponentEvent, UFlowComponent*, Component, const FGameplayTagContainer&, Tags);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnFlowEventFinish, UFlowAsset*, FlowAsset, const FString&, Flag);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnFlowEventFinish, UFlowAsset*, FlowAsset, FName, Output, const FString&, Flag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnFlowNodeEntered, UFlowAsset*, FlowAsset, UFlowNode*, Node, FName, Input);
 /**
  * Flow Subsystem
  * - manages lifetime of Flow Graphs
@@ -64,8 +64,8 @@ public:
 	virtual void AbortActiveFlows();
 
 	/* Start the root Flow, graph that will eventually instantiate next Flow Graphs through the SubGraph node */
-	UFUNCTION(BlueprintCallable, Category = "FlowSubsystem")
-	virtual void StartRootFlow(UObject* Owner, UFlowAsset* FlowAsset, const bool bAllowMultipleInstances = true);
+	UFUNCTION(BlueprintCallable, Category = "FlowSubsystem", meta=(AdvancedDisplay="bOverrideStartingNode, StartingNode, bAllowMultipleInstances, InputName"))
+	virtual void StartRootFlow(UObject* Owner, UFlowAsset* FlowAsset, const bool bOverrideStartingNode, const FGuid StartingNode, const FName InputName, const bool bAllowMultipleInstances = true);
 
 	virtual UFlowAsset* CreateRootFlow(UObject* Owner, UFlowAsset* FlowAsset, const bool bAllowMultipleInstances = true);
 
@@ -80,6 +80,11 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnFlowEventFinish OnFlowEventFinish;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnFlowNodeEntered OnFlowNodeEntered;
+
+	void Native_EndFlow(UFlowAsset* Asset, FName Output, const FString& Flag);
 	
 protected:
 	UFlowAsset* CreateSubFlow(UFlowNode_SubGraph* SubGraphNode, const FString SavedInstanceName = FString(), const bool bPreloading = false);

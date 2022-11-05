@@ -14,6 +14,8 @@
 
 #include "OmegaAbility.generated.h"
 
+
+
 // Delegates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityEnd, bool, bCancelled);
 
@@ -24,6 +26,7 @@ class UCharacterMovementComponent;
 class UEnhancedInputComponent;
 class UHUDLayer;
 class UTimelineComponent;
+class UOmegaGameManager;
 
 UENUM()
 enum class EAbilityActivateInput
@@ -156,7 +159,7 @@ protected:
 
 public:
 	//FlipFlops the input
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "Input", DisplayName="Toggle Active on Input")
 	bool FlipFlopInput;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -289,4 +292,18 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category="Combatant")
 	void OnDamaged(UCombatantComponent* Combatant, UOmegaAttribute* Attribute, float FinalDamage, UObject* Instigator);
 */	
+
+	//-###########################################################################################################-//
+	//---- EVENTS
+	//-###########################################################################################################-//
+	void Local_TriggerEvents(TArray<FName> Events);
+
+	UPROPERTY(EditDefaultsOnly, Category="GlobalEvents")
+	TArray<FName> EventsOnActivate;
+	UPROPERTY(EditDefaultsOnly, Category="GlobalEvents")
+	TArray<FName> EventsOnFinish;
+	UPROPERTY(EditDefaultsOnly, Category="GlobalEvents")
+	TArray<FName> EventsOnComplete;
+	UPROPERTY(EditDefaultsOnly, Category="GlobalEvents")
+	TArray<FName> EventsOnCancel;
 };

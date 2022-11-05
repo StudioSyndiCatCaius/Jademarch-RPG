@@ -9,6 +9,7 @@
 #include "GameFramework/SaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
+
 #include "OmegaSaveSubsystem.generated.h"
 
 class UOmegaSaveBase;
@@ -56,7 +57,10 @@ public:
 UCLASS(DisplayName = "OmegaSaveSubsystem")
 class OMEGAGAMEFRAMEWORK_API UOmegaSaveSubsystem : public UGameInstanceSubsystem
 {
-	GENERATED_BODY()	
+	GENERATED_BODY()
+
+protected:
+
 
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Colection) override;

@@ -32,9 +32,7 @@ protected:
 	UMaterialInterface* VolumeMaterial_ref;
 	UPROPERTY()
 	UStaticMesh* ShapeMeshRef;
-	
-	
-	
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -43,15 +41,13 @@ public:
 	EVolumeShape Shape;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Volume")
 	FLinearColor Color;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Volume")
+	UPROPERTY()
 	TEnumAsByte<ECollisionChannel> CollisionType;
 	
 	UFUNCTION(BlueprintImplementableEvent, Category="Volume")
 	UTexture2D* GetVolumeIcon();
 	UFUNCTION(BlueprintImplementableEvent, Category="Volume")
 	FText GetVolumeText();
-	
-	
 	
 	UPROPERTY()
 	UStaticMeshComponent* Volume;

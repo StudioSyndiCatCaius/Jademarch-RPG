@@ -5,6 +5,7 @@
 
 #include "EnhancedInputSubsystems.h"
 #include "OmegaSettings.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Widget/WidgetInterface_Input.h"
 #include "Widget/HUDLayer.h"
 
@@ -28,7 +29,7 @@ void UOmegaPlayerSubsystem::CloseAllMenus(AActor* DestroyedActor)
 
 UMenu* UOmegaPlayerSubsystem::OpenMenu(class TSubclassOf<UMenu> MenuClass, UObject* Context, FGameplayTagContainer Tags, const FString& Flag, bool AutoFocus)
 {
-	CollectGarbage(EObjectFlags::RF_Public);
+	//CollectGarbage(EObjectFlags::RF_Garbage);
 	bool bIsMenuOpen = false;
 	UMenu* DumMenu = GetMenu(MenuClass, bIsMenuOpen);
 
@@ -158,7 +159,8 @@ bool UOmegaPlayerSubsystem::CanInterfaceInput() const
 	{
 		return false;
 	}
-	else if(IWidgetInterface_Input::Execute_InputBlocked(FocusMenu))
+	if(IWidgetInterface_Input::Execute_InputBlocked(FocusMenu) ||	//Block if Input Blocked
+		FocusMenu->GetVisibility()==ESlateVisibility::Collapsed || FocusMenu->GetVisibility()==ESlateVisibility::Hidden)	//Block on Collapsed OR Hidden
 	{
 		return false;
 	}
@@ -284,24 +286,62 @@ void UOmegaPlayerSubsystem::CleanHUDLayers()
 	ActiveHUDLayers = LocalLayers;
 }
 
-void UOmegaPlayerSubsystem::SetCustomInputMode(FName InputMode)
+APlayerController* UOmegaPlayerSubsystem::Local_GetPlayerController()
 {
-	
-	FCustomInputModeData LocalInputData;
-	//END OLD MODE
-	if(GetMutableDefault<UOmegaSettings>()->CustomInputModes.Contains(CurrentInputMode))
+	if(!ParentPlayerController)
 	{
-		LocalInputData = GetMutableDefault<UOmegaSettings>()->CustomInputModes.FindOrAdd(CurrentInputMode);
-		for(auto* TempMap : LocalInputData.AddedMappingContexts)
+		ParentPlayerController = GetLocalPlayer()->GetPlayerController(GetWorld());
+	}
+	return ParentPlayerController;
+}
+
+void UOmegaPlayerSubsystem::SetCustomInputMode(UOmegaInputMode* InputMode)
+{
+	if(!InputMode)
+	{
+		return;
+	}
+
+	UEnhancedInputLocalPlayerSubsystem* LocalInputSubsys = Local_GetPlayerController()->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	
+	if(CurrentInputMode)
+	{
+		for(auto* TempContext : CurrentInputMode->AddedMappingContexts)
 		{
-			GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->RemoveMappingContext(TempMap);
+			LocalInputSubsys->RemoveMappingContext(TempContext);
 		}
 	}
-	LocalInputData = GetMutableDefault<UOmegaSettings>()->CustomInputModes.FindOrAdd(InputMode);
-	for(auto* TempMap : LocalInputData.AddedMappingContexts)
+	
+	//Add New
+	Local_GetPlayerController()->bShowMouseCursor = InputMode->bShowMouseCursor;
+	Local_GetPlayerController()->bEnableClickEvents = InputMode->bEnabledClickEvents;
+	Local_GetPlayerController()->bEnableTouchEvents = InputMode->bEnableTouchOverEvents;
+	Local_GetPlayerController()->bEnableMouseOverEvents = InputMode->bEnableMouseOverEvents;
+	Local_GetPlayerController()->bEnableTouchOverEvents = InputMode->bEnableTouchOverEvents;
+
+	for(const auto* TempContext : InputMode->AddedMappingContexts)
 	{
-		GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(TempMap, 0);
+		if(TempContext)
+		{
+			LocalInputSubsys->AddMappingContext(TempContext, InputMode->InputPriority);
+		}
+		
 	}
+	
+	switch (InputMode->Type)
+	{
+	case EInputModeType::InputModeType_Game:
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(Local_GetPlayerController());
+			break;
+	case EInputModeType::InputModeType_UI:
+			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(Local_GetPlayerController());
+			break;
+	case EInputModeType::InputModeType_GameUI:
+			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(Local_GetPlayerController());
+			break;
+	default: ;
+	}
+
 	CurrentInputMode = InputMode;
 	OnInputModeChanged.Broadcast(InputMode);
 }

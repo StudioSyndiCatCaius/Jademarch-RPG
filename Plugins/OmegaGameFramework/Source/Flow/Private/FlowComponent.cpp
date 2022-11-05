@@ -40,6 +40,7 @@ void UFlowComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(UFlowComponent, NotifyTagsFromAnotherComponent);
 }
 
+
 void UFlowComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -62,9 +63,29 @@ void UFlowComponent::BeginPlay()
 			}
 			else if (bAutoStartRootFlow)
 			{
-				StartRootFlow();
+				const FGuid DumGuid;
+				StartRootFlow(false, DumGuid, "");
 			}
 		}
+	}
+
+	GetFlowSubsystem()->OnFlowEventFinish.AddDynamic(this, &UFlowComponent::Local_OnFlowEnd);
+	GetFlowSubsystem()->OnFlowNodeEntered.AddDynamic(this, &UFlowComponent::Local_OnFlowEnter);
+}
+
+void UFlowComponent::Local_OnFlowEnd(UFlowAsset* FlowAsset, FName Output, const FString& Flag)
+{
+	if(FlowAsset == GetRootFlowInstance())
+	{
+		OnFlowFinish.Broadcast(Output, Flag);
+	}
+}
+
+void UFlowComponent::Local_OnFlowEnter(UFlowAsset* FlowAsset, UFlowNode* Node, FName Input)
+{
+	if(FlowAsset == GetRootFlowInstance())
+	{
+		OnNodeEntered.Broadcast(Node, Input);
 	}
 }
 
@@ -362,7 +383,7 @@ void UFlowComponent::OnRep_NotifyTagsFromAnotherComponent()
 	}
 }
 
-void UFlowComponent::StartRootFlow()
+void UFlowComponent::StartRootFlow(const bool bOverrideStartingNode, const FGuid StartingNode, const FName InputName)
 {
 	if (RootFlow && IsFlowNetMode(RootFlowMode))
 	{
@@ -370,7 +391,7 @@ void UFlowComponent::StartRootFlow()
 		{
 			VerifyIdentityTags();
 
-			FlowSubsystem->StartRootFlow(this, RootFlow, bAllowMultipleInstances);
+			FlowSubsystem->StartRootFlow(this, RootFlow, bOverrideStartingNode, StartingNode, InputName, bAllowMultipleInstances);
 		}
 	}
 }

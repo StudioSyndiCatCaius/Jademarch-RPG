@@ -65,9 +65,13 @@ void UMenu::CloseMenu(FGameplayTagContainer Tags, const FString& Flag)
 		{
 			SubsystemRef->ClearControlWidget();
 		}
-		
+
+		SetVisibility(ESlateVisibility::HitTestInvisible);
 		
 		//ANIMATION
+
+		bIsClosing = true;
+		
 		if(GetCloseAnimation())
 		{
 			if(ReverseCloseAnimation)
@@ -88,19 +92,23 @@ void UMenu::CloseMenu(FGameplayTagContainer Tags, const FString& Flag)
 
 void UMenu::OnAnimationFinished_Implementation(const UWidgetAnimation* MovieSceneBlends)
 {
-	Super::OnAnimationFinished_Implementation(MovieSceneBlends);
-	if(MovieSceneBlends==GetOpenAnimation())
+	
+	if(MovieSceneBlends==GetOpenAnimation() && !bIsClosing)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Menu CLOSE Complete") );
 		Native_CompleteOpen();
 	}
-	else if (MovieSceneBlends==GetCloseAnimation())
+	else if (MovieSceneBlends==GetCloseAnimation() && bIsClosing)
 	{
 		Native_CompleteClose();
 	}
+	Super::OnAnimationFinished_Implementation(MovieSceneBlends);
 }
+
 
 void UMenu::NativeConstruct()
 {
+	/*
 	//Try Set Close Anim
 	if(GetCloseAnimation())
 	{
@@ -114,11 +122,7 @@ void UMenu::NativeConstruct()
 		OpenDelegate.BindUFunction(this, "Native_CompleteOpen");
 		BindToAnimationFinished(GetOpenAnimation(), OpenDelegate);
 		
-	}
-	else
-	{
-		Native_CompleteOpen();
-	}
+	}*/
 	
 	Super::NativeConstruct();
 }
@@ -130,12 +134,11 @@ void UMenu::Native_CompleteOpen()
 
 void UMenu::Native_CompleteClose()
 {
-	
 	PrivateInputBlocked = true;
 	SetIsEnabled(false);
-	SetVisibility(VisibilityOnClose);
-	
-	//Prep for deletio
+	bIsClosing = false;
+	SetVisibility(ESlateVisibility::Collapsed);
+	UE_LOG(LogTemp, Warning, TEXT("Menu CLOSE Complete") );
     RemoveFromParent();
 }
 

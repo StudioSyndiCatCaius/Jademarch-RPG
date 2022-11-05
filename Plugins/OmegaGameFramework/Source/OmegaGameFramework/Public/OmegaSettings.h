@@ -8,6 +8,7 @@
 
 #include "CoreMinimal.h"
 #include "InputMappingContext.h"
+#include "OmegaAttribute.h"
 #include "Engine/DeveloperSettings.h"
 
 #include "GameFramework/SaveGame.h"
@@ -29,18 +30,6 @@ enum class EOmegaInputModeType : uint8
 	GameAndUI,
 };
 
-USTRUCT()
-struct FCustomInputModeData
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY()
-	TEnumAsByte<EOmegaInputModeType> InputType;
-	UPROPERTY()
-	bool ControllerInputEnabled;
-	UPROPERTY(EditAnywhere, Category="InputMode")
-	TArray<UInputMappingContext*> AddedMappingContexts;
-};
 
 UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Omega: Framework"))
 class OMEGAGAMEFRAMEWORK_API UOmegaSettings : public UDeveloperSettings
@@ -57,7 +46,7 @@ public:
 	UPROPERTY(EditAnywhere, config, Category = "Gameplay", meta = (MetaClass = "OmegaGameplayModule"))
 	TArray<FSoftClassPath> RegisteredGameplayModules;
 
-	UPROPERTY(EditAnywhere, config, Category = "DataItems")
+	UPROPERTY()
 	TArray<FName> SystemScansPath;
 	
 	//SAVE
@@ -80,10 +69,18 @@ public:
 
 	//Writes save game properties to a Json String. If false, uses legacy method. NOTE: Seting this as 
 	//Input
-
-	UPROPERTY(EditAnywhere, Config, Category= "Input")
-	TMap<FName, FCustomInputModeData> CustomInputModes;
-
+	
+	//########################################################
 	//Preferences
+	//########################################################
+	//These paths will automatically scanned on Init. And game preferences found in them will be automatically loaded into the Game Preferences Subsystem.
+	UPROPERTY(EditAnywhere, config, Category = "Game Preferences")
+	TArray<FDirectoryPath> Preferences_ScanPaths;
 
+	//########################################################
+	//Combat
+	//########################################################
+	//Gives unique IDs to Attributes for quick access
+	UPROPERTY(EditAnywhere, config, Category = "Combatant", meta=(MetaClass="OmegaAttribute"))
+	TMap<FString, FSoftObjectPath> AttributeIDs;
 };

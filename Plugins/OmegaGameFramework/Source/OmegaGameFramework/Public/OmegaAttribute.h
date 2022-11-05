@@ -47,7 +47,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float MaxValue;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	bool bIsValueStatic;
 
@@ -57,6 +57,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	TMap<FGameplayTag, float> ValueCategoryAdjustments;
 
+	int32 LocalFloor(float Number, int32 Decimals);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value", AdvancedDisplay)
+	int32 MaxDecimals = 2;
+	
 	//Tags
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Tags")
 	FGameplayTag AttributeCategory;

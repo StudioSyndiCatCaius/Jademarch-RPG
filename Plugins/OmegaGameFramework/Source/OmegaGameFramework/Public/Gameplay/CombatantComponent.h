@@ -7,6 +7,7 @@
 #include "DataInterface_General.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "Combatant/DataInterface_SkillSource.h"
 #include "Kismet/GameplayStatics.h"
 #include "Gameplay/CombatInputUtility.h"
 
@@ -97,6 +98,7 @@ public:
 	////////// -- Attributes -- //////////
 	///////////////////////////////////
 
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
 	class UOmegaAttributeSet* AttributeSet;
 
@@ -117,6 +119,12 @@ public:
 
 	float GatherAttributeModifiers(TArray<UObject*> Modifiers, float BaseValue, UOmegaAttribute* Attribute);
 
+	UFUNCTION(BlueprintPure, Category="Attributes")
+	float AdjustAttributeValueByModifiers(UOmegaAttribute* Attribute, TArray<FOmegaAttributeModifier> Modifiers);
+
+	UFUNCTION(BlueprintPure, Category="Attributes")
+	TArray<FOmegaAttributeModifier> GetAllModifierValues();
+	
 	////////////////////////////////////
 	////////// -- Faction -- //////////
 	///////////////////////////////////
@@ -143,7 +151,10 @@ public:
 	////////// -- Skills -- //////////
 	///////////////////////////////////
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Abilities")
+	UFUNCTION(BlueprintPure, Category="Combatant|Skills")
+	TArray<UPrimaryDataAsset*> GetSkills();
+	
+	UPROPERTY(EditAnywhere, Category="Abilities")
 	TArray<UPrimaryDataAsset*> Skills;
 
 	UFUNCTION(BlueprintCallable, Category="Skills")
@@ -151,6 +162,25 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Skills")
 	void RemoveSkill(UPrimaryDataAsset* Skill);
+
+	UFUNCTION(BlueprintCallable, Category="Combatant|DamageModifiers")
+	bool SetSkillSourceActive(UObject* SkillSource, bool bActive);
+
+	UPROPERTY()
+	TArray<UObject*> Local_SkillSources;
+	UFUNCTION()
+	TArray<UObject*> Local_GetSkillSources()
+	{
+		TArray<UObject*> OutSkills;
+		for(auto* TempSource : Local_SkillSources)
+		{
+			if(TempSource && TempSource->GetClass()->ImplementsInterface(UDataInterface_SkillSource::StaticClass()))
+			{
+				OutSkills.AddUnique(TempSource);
+			}
+		}
+		return OutSkills;
+	}
 	
 	////////////////////////////////////
 	////////// -- Tags -- //////////
@@ -187,8 +217,9 @@ public:
 	////////////////////////////////////
 	////////// -- General -- ////////
 	///////////////////////////////////
-	
-	UFUNCTION(BlueprintCallable, Category = "Combatant")
+
+	//Refreshes all visible combatnat related values, primarily in widgets.
+	UFUNCTION(BlueprintCallable, Category = "Combatant", DisplayName="Refresh")
 	void Update();
 
 	//Tries to get the owning actor as a Pawn.
@@ -223,11 +254,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay, Category = "General")
 	class UPrimaryDataAsset* CombatantDataAsset;
 
-	UPROPERTY(EditAnywhere, Category = "General", meta = (DisplayName = "Name"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General", meta = (DisplayName = "Name"))
 	FText DisplayName;
-	UPROPERTY(EditAnywhere, Category = "General", meta = (DisplayName = "Description"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General", meta = (DisplayName = "Description"))
 	FText CombatantDescription;
-	UPROPERTY(EditAnywhere, Category = "General", meta = (DisplayName = "Icon"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "General", meta = (DisplayName = "Icon"))
 	FSlateBrush CombatantIcon;
 	
 	////////////////////////////////////
@@ -288,6 +319,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Combatant")
 	void InitializeFromAsset(UObject* Asset);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Attributes")
+	bool bCanDamageAttributes = true;
+	
 	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (AdvancedDisplay = "Instigator"))
 	float ApplyAttributeDamage(class UOmegaAttribute* Attribute, float BaseDamage, class UObject* Instigator, UObject* Context);
 	

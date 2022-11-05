@@ -9,6 +9,8 @@
 #include "InputMappingContext.h"
 #include "InputReceiverComponent.generated.h"
 
+class APlayerController;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInputStart);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInputTrigger);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInputComplete);
@@ -39,7 +41,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	class UInputAction* InputAction;
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
+	UPROPERTY()
 	TArray<FEnhancedActionKeyMapping> KeyMappings;
 	
 	UPROPERTY()

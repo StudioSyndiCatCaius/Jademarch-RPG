@@ -338,13 +338,31 @@ void UFlowAsset::PreStartFlow()
 #endif
 }
 
-void UFlowAsset::StartFlow()
+void UFlowAsset::StartFlow(UGameInstance* GameInstance, const bool Override, const FGuid NodeGuid, const FName InputName)
 {
 	PreStartFlow();
 
+	//Run Traits
+	for(auto* TempTrait : Traits)
+	{
+		if(TempTrait)
+		{
+			TempTrait->Native_FlowBegin(GameInstance);
+		}
+	}
+	
 	ensureAlways(StartNode);
 	RecordedNodes.Add(StartNode);
-	StartNode->TriggerFirstOutput(true);
+
+	if(Override && GetNodeFromGuid(NodeGuid))
+	{
+		TriggerInput(NodeGuid, InputName);
+	}
+	else
+	{
+		StartNode->TriggerFirstOutput(true);
+	}
+	
 }
 
 void UFlowAsset::FinishFlow(const EFlowFinishPolicy InFinishPolicy)
@@ -462,6 +480,31 @@ UFlowNode_SubGraph* UFlowAsset::GetNodeOwningThisAssetInstance() const
 UFlowAsset* UFlowAsset::GetMasterInstance() const
 {
 	return NodeOwningThisAssetInstance.IsValid() ? NodeOwningThisAssetInstance.Get()->GetFlowAsset() : nullptr;
+}
+
+TArray<UFlowNode*> UFlowAsset::GetAllNodes()
+{
+	TArray<UFlowNode*> OutNodes;
+	TArray<FGuid> TempGuidArray;
+	GetNodes().GetKeys(TempGuidArray);
+	for(FGuid TempGuid : TempGuidArray)
+	{
+		if(GetNodes()[TempGuid])
+		{
+			OutNodes.Add(GetNodes()[TempGuid]);
+		}
+	}
+	return OutNodes;
+}
+
+UFlowNode* UFlowAsset::GetNodeFromGuid(FGuid Guid)
+{
+	if(Nodes.FindOrAdd(Guid))
+	{
+		UFlowNode* OutNode = Nodes.FindOrAdd(Guid);
+		return OutNode;
+	}
+	return nullptr;
 }
 
 FFlowAssetSaveData UFlowAsset::SaveInstance(TArray<FFlowAssetSaveData>& SavedFlowInstances)

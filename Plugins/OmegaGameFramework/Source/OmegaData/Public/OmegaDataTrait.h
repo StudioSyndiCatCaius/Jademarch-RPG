@@ -21,21 +21,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Trait")
 	FString TraitLabel;
 	
-	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait", meta=(AdvancedDisplay="Flag, Tags"))
+	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait", meta=(AdvancedDisplay="Tags"))
 	void AppliedToActor(AActor* Actor, const FString& Flag, FGameplayTagContainer Tags) const;
 	
-	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait", meta=(AdvancedDisplay="Flag, Tags"))
+	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait", meta=(AdvancedDisplay="Tags"))
+	void AppliedToComponent(UActorComponent* Component, const FString& Flag, FGameplayTagContainer Tags) const;
+	
+	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait", meta=(AdvancedDisplay="Tags"))
 	void AppliedToWidget(UUserWidget* Widget, const FString& Flag, FGameplayTagContainer Tags) const;
 	
-	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait", meta=(AdvancedDisplay="Flag, Tags"))
+	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait")
 	FText AppendedItemName() const;
 	
-	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait", meta=(AdvancedDisplay="Flag, Tags"))
+	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait")
 	FText AppendedItemDescription() const;
 
-	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait", meta=(AdvancedDisplay="Flag, Tags"))
+	UFUNCTION(BlueprintImplementableEvent, Category="DataItem|Trait")
 	FGameplayTagContainer AppendedItemTags() const;
-	
+
+	// SOFT PROPERTIES
 	UFUNCTION(BlueprintImplementableEvent, Category="Properties", DisplayName="Get Trait Property (Bool)")
 	bool BindTraitProperty_Bool(const FString& Property, bool& ValidProperty) const;
 	UFUNCTION(BlueprintImplementableEvent, Category="Properties", DisplayName="Get Trait Property (Int32)")

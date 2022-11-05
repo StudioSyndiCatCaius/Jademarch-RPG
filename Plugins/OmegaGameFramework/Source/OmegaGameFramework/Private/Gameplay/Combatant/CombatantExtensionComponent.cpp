@@ -36,6 +36,10 @@ void UCombatantExtensionComponent::BeginPlay()
 		{
 			CombatantRef->SetDamageModifierActive(this, true);
 		}
+		if(bIsSkillSource)
+		{
+			CombatantRef->SetSkillSourceActive(this, true);
+		}
 	}
 	// ...
 	
@@ -52,6 +56,10 @@ void UCombatantExtensionComponent::BeginDestroy()
 		if(bIsDamageModifier)
 		{
 			CombatantRef->SetDamageModifierActive(this, false);
+		}
+		if(bIsSkillSource)
+		{
+			CombatantRef->SetSkillSourceActive(this, false);
 		}
 	}
 	Super::BeginDestroy();

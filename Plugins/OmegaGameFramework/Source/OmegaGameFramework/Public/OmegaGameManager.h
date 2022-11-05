@@ -64,7 +64,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnNewLevel OnNewLevel;
 
-	//Flags
+	//################################################################
+	// FLAGS
+	//################################################################
 	UPROPERTY(BlueprintReadOnly, Category="Ω|GameManager")
 	TArray<FString> Flags;
 

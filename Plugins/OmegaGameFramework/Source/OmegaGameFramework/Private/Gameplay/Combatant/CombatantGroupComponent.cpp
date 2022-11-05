@@ -2,6 +2,8 @@
 
 #include "Gameplay/Combatant/CombatantGroupComponent.h"
 
+#include "JsonObjectWrapper.h"
+
 // Sets default values for this component's properties
 UCombatantGroupComponent::UCombatantGroupComponent()
 {
@@ -32,8 +34,17 @@ void UCombatantGroupComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	// ...
 }
 
-void UCombatantGroupComponent::SetCombatantInGroup(UCombatantComponent* Combatant, bool InGroup)
+bool UCombatantGroupComponent::IsGroupFull()
 {
+	return MaxGroupMembers>0 && GetCombatants().Num() >= MaxGroupMembers;
+}
+
+bool UCombatantGroupComponent::SetCombatantInGroup(UCombatantComponent* Combatant, bool InGroup)
+{
+	if(IsGroupFull())
+	{
+		return false;
+	}
 	if(Combatant)
 	{
 		if(InGroup)
@@ -48,6 +59,7 @@ void UCombatantGroupComponent::SetCombatantInGroup(UCombatantComponent* Combatan
 		
 		OnCombatantSetInGroup.Broadcast(Combatant, InGroup);
 	}
+	return true;
 }
 
 TArray<UCombatantComponent*> UCombatantGroupComponent::GetCombatants()

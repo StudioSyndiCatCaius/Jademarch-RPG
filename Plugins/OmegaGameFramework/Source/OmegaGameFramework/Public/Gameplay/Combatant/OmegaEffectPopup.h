@@ -24,6 +24,8 @@ public:
 	UPROPERTY()
 	AOmegaGameplayEffect* OwningEffect;
 	
+
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	UTextBlock* GetDamageText();
 

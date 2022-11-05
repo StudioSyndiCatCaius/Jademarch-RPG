@@ -18,6 +18,6 @@ UFlowNode_Finish::UFlowNode_Finish(const FObjectInitializer& ObjectInitializer)
 void UFlowNode_Finish::ExecuteInput(const FName& PinName)
 {
 	// this will call FinishFlow()
-	GetFlowSubsystem()->OnFlowEventFinish.Broadcast(GetFlowAsset(), FinishFlag);
+	GetFlowSubsystem()->Native_EndFlow(GetFlowAsset(), "Finish",FinishFlag);
 	Finish();
 }

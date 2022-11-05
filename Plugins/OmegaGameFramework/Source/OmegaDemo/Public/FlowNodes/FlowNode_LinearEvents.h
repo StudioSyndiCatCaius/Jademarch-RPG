@@ -20,7 +20,9 @@ public:
 	UFlowNode_LinearEvents();
 
 	virtual void ExecuteInput(const FName& PinName) override;
-
+	
+	virtual FString K2_GetNodeDescription_Implementation() const override;
+	
 	UPROPERTY(EditAnywhere, Category="Events")
 	FLinearEventSequence Events;
 

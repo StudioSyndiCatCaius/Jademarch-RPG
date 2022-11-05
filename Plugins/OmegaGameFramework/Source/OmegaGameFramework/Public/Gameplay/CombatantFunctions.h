@@ -37,5 +37,10 @@ class OMEGAGAMEFRAMEWORK_API UCombatantFunctions : public UBlueprintFunctionLibr
 
 	UFUNCTION(BlueprintCallable, Category="Combat", meta = (WorldContext = "WorldContextObject")) 
 	static void NotifyCombatantFaction(const UObject* WorldContextObject, FGameplayTag Faction, FName Notify);
-		
+
+	//-----------------------------------------------------------------------------------
+	// ATTRIBUTES
+	//-----------------------------------------------------------------------------------
+	UFUNCTION(BlueprintPure, Category="Attributes", meta=(CompactNodeTitle="Attribute ID"))
+	static UOmegaAttribute* GetAttributeByUniqueID(const FString& ID);
 };

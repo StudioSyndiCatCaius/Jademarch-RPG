@@ -7,6 +7,10 @@
 
 #include "Components/BillboardComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Engine/StaticMesh.h"
+#include "Components/StaticMeshComponent.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 AAdvancedVolume::AAdvancedVolume()
 {
@@ -24,6 +28,7 @@ AAdvancedVolume::AAdvancedVolume()
 	if(Volume)
 	{
 		Volume->SetupAttachment(RootRef);
+		Volume->SetHiddenInGame(true);
 	}
 	
 	// Text
@@ -42,12 +47,12 @@ AAdvancedVolume::AAdvancedVolume()
 		IconDisplay->SetupAttachment(RootRef);
 	}
 	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShapeRef_Sphere(TEXT("/Engine/BasicShapes/Sphere"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShapeRef_Sphere(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
 	ShapeMeshRef_sphere = ShapeRef_Sphere.Object;
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShapeRef_Box(TEXT("/Engine/BasicShapes/Cube"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShapeRef_Box(TEXT("/Engine/BasicShapes/Cube.Cube"));
 	ShapeMeshRef_box = ShapeRef_Box.Object;
 
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> MatRef(TEXT("/OmegaGameFramework/Materials/m_trans"));
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> MatRef(TEXT("/OmegaGameFramework/Materials/m_trans.m_trans"));
 	VolumeMaterial_ref = MatRef.Object;
 }
 
@@ -55,7 +60,7 @@ AAdvancedVolume::AAdvancedVolume()
 void AAdvancedVolume::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Volume->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 }
 
 // Called every frame
@@ -79,11 +84,15 @@ void AAdvancedVolume::OnConstruction(const FTransform& Transform)
 	default: ;
 	}
 
-	Volume->SetCollisionObjectType(CollisionType);
+	//Volume->SetCollisionObjectType(CollisionType);
 	
-	UMaterialInstanceDynamic* LocalMatInst = Volume->CreateDynamicMaterialInstance(0, VolumeMaterial_ref);
-	LocalMatInst->SetVectorParameterValue("Color", Color);
-	LocalMatInst->SetScalarParameterValue("Opacity", 0.35);
+	if(Volume)
+	{
+		Volume->SetGenerateOverlapEvents(true);
+		UMaterialInstanceDynamic* LocalMatInst = Volume->CreateDynamicMaterialInstance(0, VolumeMaterial_ref);
+		LocalMatInst->SetVectorParameterValue("Color", Color);
+		LocalMatInst->SetScalarParameterValue("Opacity", 0.35);
+	}
 	
 	
 	//------------------------------------ICON--------------------------------------//
@@ -93,7 +102,6 @@ void AAdvancedVolume::OnConstruction(const FTransform& Transform)
 		IconDisplay->SetWorldLocation(GetActorLocation()+FVector(0,0,50));
 		IconDisplay->SetWorldScale3D(FVector(1,1,1));
 	}
-	
 	
 	//------------------------------------Name--------------------------------------//
 	if(TextDisplay)

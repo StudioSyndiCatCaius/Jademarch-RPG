@@ -17,11 +17,11 @@ class OMEGADEMO_API USaveCondition_AssetCollected : public UOmegaSaveCondition
 
 public:
 
-	UPROPERTY(EditInstanceOnly, Category="Condition")
+	UPROPERTY(EditAnywhere, Category="Condition")
 	TArray<UPrimaryDataAsset*> DataAssets;
-	UPROPERTY(EditInstanceOnly, Category="Condition")
+	UPROPERTY(EditAnywhere, Category="Condition")
 	bool NOT;
-	UPROPERTY(EditInstanceOnly, Category="Condition")
+	UPROPERTY(EditAnywhere, Category="Condition")
 	bool GlobalSave;
 
 	virtual bool CheckSaveCondition_Implementation(UOmegaSaveSubsystem* SaveSubsystem) const override;

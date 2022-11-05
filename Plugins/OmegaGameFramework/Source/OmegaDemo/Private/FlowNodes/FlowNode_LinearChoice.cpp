@@ -2,15 +2,16 @@
 
 
 #include "FlowNodes/FlowNode_LinearChoice.h"
-
+#include "FlowTypes.h"
 #include "OmegaLinearEventSubsystem.h"
+#include "Engine/World.h"
 
 UFlowNode_LinearChoice::UFlowNode_LinearChoice()
 {
 	InputPins.Empty();
 	InputPins.Add(FFlowPin(TEXT("Begin")));
 	OutputPins.Empty();
-	NodeStyle = EFlowNodeStyle::Latent;
+	//NodeStyle = EFlowNodeStyle::Latent;
 #if WITH_EDITOR
 	Category = TEXT("GameFlow");
 #endif
@@ -22,7 +23,7 @@ void UFlowNode_LinearChoice::LocalChoiceSelect(UOmegaLinearChoice* Choice, int32
 	TriggerOutput(FName(OutputLocalName));
 }
 
-bool UFlowNode_LinearChoice::CanUserAddOutput() const
+bool UFlowNode_LinearChoice::K2_CanUserAddOutput_Implementation() const
 {
 	return true;
 }

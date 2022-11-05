@@ -4,6 +4,7 @@
 #include "Gameplay/CombatantFunctions.h"
 
 #include "OmegaGameplaySubsystem.h"
+#include "OmegaSettings.h"
 #include "Gameplay/DataInterface_OmegaEffect.h"
 
 TArray<UCombatantComponent*> UCombatantFunctions::FilterCombatantsByTags(
@@ -130,4 +131,15 @@ void UCombatantFunctions::NotifyCombatantFaction(const UObject* WorldContextObje
 			TempComb->CombatantNotify(Notify,"");
 		}
 	}
+}
+
+UOmegaAttribute* UCombatantFunctions::GetAttributeByUniqueID(const FString& ID)
+{
+	TMap<FString, FSoftObjectPath> LocalAID = GetMutableDefault<UOmegaSettings>()->AttributeIDs;
+	FSoftObjectPath LocalAttributePath = LocalAID.FindOrAdd(ID);
+	if(LocalAttributePath.IsValid())
+	{
+		return LoadObject<UOmegaAttribute>(NULL, *LocalAttributePath.ToString());
+	}
+	return nullptr;
 }

@@ -139,6 +139,11 @@ FString UFlowNode::GetNodeDescription() const
 {
 	return K2_GetNodeDescription();
 }
+
+FString UFlowNode::K2_GetNodeDescription_Implementation() const
+{
+	return "";
+}
 #endif
 
 UFlowAsset* UFlowNode::GetFlowAsset() const
@@ -229,6 +234,16 @@ void UFlowNode::RemoveUserOutput()
 {
 	Modify();
 	OutputPins.RemoveAt(OutputPins.Num() - 1);
+}
+
+bool UFlowNode::K2_CanUserAddOutput_Implementation() const
+{
+	return false;
+}
+
+bool UFlowNode::K2_CanUserAddInput_Implementation() const
+{
+	return false;
 }
 #endif
 
@@ -360,7 +375,8 @@ void UFlowNode::TriggerInput(const FName& PinName, const bool bForcedActivation 
 #endif // UE_BUILD_SHIPPING
 		return;
 	}
-
+	
+	GetFlowSubsystem()->OnFlowNodeEntered.Broadcast(GetFlowAsset(), this, PinName);
 	ExecuteInput(PinName);
 }
 
@@ -377,8 +393,9 @@ void UFlowNode::TriggerFirstOutput(const bool bFinish)
 	}
 }
 
-void UFlowNode::TriggerOutput(const FName& PinName, const bool bFinish /*= false*/, const bool bForcedActivation /*= false*/)
+void UFlowNode::TriggerOutput(FName PinName, const bool bFinish /*= false*/, const bool bForcedActivation /*= false*/)
 {
+	const FName Local_PinName = PinName;
 	// clean up node, if needed
 	if (bFinish)
 	{
@@ -386,29 +403,29 @@ void UFlowNode::TriggerOutput(const FName& PinName, const bool bFinish /*= false
 	}
 
 #if !UE_BUILD_SHIPPING
-	if (OutputPins.Contains(PinName))
+	if (OutputPins.Contains(Local_PinName))
 	{
 		// record for debugging, even if nothing is connected to this pin
-		TArray<FPinRecord>& Records = OutputRecords.FindOrAdd(PinName);
+		TArray<FPinRecord>& Records = OutputRecords.FindOrAdd(Local_PinName);
 		Records.Add(FPinRecord(FApp::GetCurrentTime(), bForcedActivation));
 
 #if WITH_EDITOR
 		if (GetWorld()->WorldType == EWorldType::PIE && UFlowAsset::GetFlowGraphInterface().IsValid())
 		{
-			UFlowAsset::GetFlowGraphInterface()->OnOutputTriggered(GraphNode, OutputPins.IndexOfByKey(PinName));
+			UFlowAsset::GetFlowGraphInterface()->OnOutputTriggered(GraphNode, OutputPins.IndexOfByKey(Local_PinName));
 		}
 #endif // WITH_EDITOR
 	}
 	else
 	{
-		LogError(FString::Printf(TEXT("Output Pin name %s invalid"), *PinName.ToString()));
+		LogError(FString::Printf(TEXT("Output Pin name %s invalid"), *Local_PinName.ToString()));
 	}
 #endif // UE_BUILD_SHIPPING
 
 	// call the next node
-	if (OutputPins.Contains(PinName) && Connections.Contains(PinName))
+	if (OutputPins.Contains(Local_PinName) && Connections.Contains(Local_PinName))
 	{
-		const FConnectedPin FlowPin = GetConnection(PinName);
+		const FConnectedPin FlowPin = GetConnection(Local_PinName);
 		GetFlowAsset()->TriggerInput(FlowPin.NodeGuid, FlowPin.PinName);
 	}
 }

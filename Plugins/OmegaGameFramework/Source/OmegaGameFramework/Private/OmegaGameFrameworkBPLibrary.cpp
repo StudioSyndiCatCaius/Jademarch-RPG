@@ -5,13 +5,15 @@
 #include "OmegaGameFramework.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
+#include "OmegaGameManager.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Gameplay/GameplayTagsInterface.h"
+#include "Player/OmegaPlayerSubsystem.h"
 
 
 TArray<UObject*> UOmegaGameFrameworkBPLibrary::FilterObjectsByCategoryTag(TArray<UObject*> Assets,
-	FGameplayTag CategoryTag, bool bExact, bool bExclude, TSubclassOf<UObject> Class)
+                                                                          FGameplayTag CategoryTag, bool bExact, bool bExclude, TSubclassOf<UObject> Class)
 {
 	TArray<UObject*> OutAssets;
 	
@@ -164,8 +166,23 @@ AActor* UOmegaGameFrameworkBPLibrary::GetPlayerMouseOverActor(APlayerController*
 	return nullptr;
 }
 
+void UOmegaGameFrameworkBPLibrary::SetPlayerCustomInputMode(const UObject* WorldContextObject,
+	APlayerController* Player, UOmegaInputMode* InputMode)
+{
+	if(!InputMode)
+	{
+		return;
+	}
+	const APlayerController* TempPlayer = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
+	if(Player)
+	{
+		TempPlayer = Player;
+	}
+	TempPlayer->GetLocalPlayer()->GetSubsystem<UOmegaPlayerSubsystem>()->SetCustomInputMode(InputMode);
+}
+
 void UOmegaGameFrameworkBPLibrary::SetGlobalActorBinding(const UObject* WorldContextObject, FName Binding,
-	AActor* Actor)
+                                                         AActor* Actor)
 {
 	WorldContextObject->GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>()->SetGlobalActorBinding(Binding, Actor);
 }
@@ -178,5 +195,19 @@ void UOmegaGameFrameworkBPLibrary::ClearGlobalActorBinding(const UObject* WorldC
 AActor* UOmegaGameFrameworkBPLibrary::GetGlobalActorBinding(const UObject* WorldContextObject, FName Binding)
 {
 	return WorldContextObject->GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>()->GetGlobalActorBinding(Binding);
+}
+
+// QUICK ACCESS
+AOmegaGameplaySystem* UOmegaGameFrameworkBPLibrary::GetActiveGameplaySystem(const UObject* WorldContextObject,
+	TSubclassOf<AOmegaGameplaySystem> SystemClass)
+{
+	bool LocalIsActive;
+	return WorldContextObject->GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>()->GetGameplaySystem(SystemClass, LocalIsActive);
+}
+
+UOmegaGameplayModule* UOmegaGameFrameworkBPLibrary::GetGameplayModule(const UObject* WorldContextObject,
+	TSubclassOf<UOmegaGameplayModule> ModuleClass)
+{
+	return WorldContextObject->GetWorld()->GetGameInstance()->GetSubsystem<UOmegaGameManager>()->GetGameplayModule(ModuleClass);
 }
 

@@ -3,7 +3,6 @@
 
 #include "Save/OmegaSaveSubsystem.h"
 
-#include "K2Node_CastByteToEnum.h"
 #include "OmegaGameManager.h"
 #include "Save/OmegaSaveGame.h"
 #include "Save/OmegaSaveGlobal.h"
@@ -16,6 +15,7 @@
 #include "OmegaSettings.h"
 #include "Gameplay/OmegaGameplayModule.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Preferences/GamePreferenceSubsystem.h"
 #include "Save/OmegaSaveCondition.h"
 
 void UOmegaSaveSubsystem::Initialize(FSubsystemCollectionBase& Colection)
@@ -174,6 +174,7 @@ void UOmegaSaveSubsystem::StartGame(class UOmegaSaveGame* GameData, FGameplayTag
 		TempModule->GameFileStarted(ActiveSaveData);
 	}
 
+	//GetGameInstance()->GetSubsystem<UGamePreferenceSubsystem>()->Local_PreferenceUpdateAll();
 }
 
 UOmegaSaveBase* UOmegaSaveSubsystem::GetSaveObject(bool Global)

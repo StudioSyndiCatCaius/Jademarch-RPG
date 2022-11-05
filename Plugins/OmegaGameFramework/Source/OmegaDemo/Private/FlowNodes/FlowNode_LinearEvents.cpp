@@ -25,6 +25,22 @@ void UFlowNode_LinearEvents::ExecuteInput(const FName& PinName)
 	LocalInst->OnEventSequenceFinish.AddDynamic(this, &UFlowNode_LinearEvents::LocalFinish);
 }
 
+FString UFlowNode_LinearEvents::K2_GetNodeDescription_Implementation() const
+{
+	FString OutString;
+	for(const auto* TempEvent : Events.Events)
+	{
+		if(TempEvent)
+		{
+			const FString LocalString = TempEvent->GetLogString();
+			OutString.Append(LocalString);
+			OutString.Append("\n");
+		}
+	}
+	return OutString;
+}
+
+
 void UFlowNode_LinearEvents::LocalFinish(const FString& Flag)
 {
 	TriggerFirstOutput(true);
