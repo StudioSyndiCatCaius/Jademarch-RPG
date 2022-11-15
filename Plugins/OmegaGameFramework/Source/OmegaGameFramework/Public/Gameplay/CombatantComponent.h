@@ -53,7 +53,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCombatantNotify, UCombatantCom
 #define PrintError(ErrorText) \
 	(GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, ErrorText))
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=("Omega Game Framework"), meta=(BlueprintSpawnableComponent) )
 class OMEGAGAMEFRAMEWORK_API UCombatantComponent : public UActorComponent, public IDataInterface_General
 {
 	GENERATED_BODY()

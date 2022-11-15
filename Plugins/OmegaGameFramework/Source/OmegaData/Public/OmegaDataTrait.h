@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DataInterface_General.h"
 #include "GameFramework/Actor.h"
 #include "GameplayTagContainer.h"
 #include "Data/SoftPropertiesInterface.h"
@@ -13,7 +14,7 @@ class UUserWidget;
 class UOmegaDataItem;
 
 UCLASS(Blueprintable, abstract, const, editinlinenew, hidecategories=Object, CollapseCategories)
-class OMEGADATA_API UOmegaDataTrait : public UObject
+class OMEGADATA_API UOmegaDataTrait : public UObject, public IDataInterface_General
 {
 	GENERATED_BODY()
 

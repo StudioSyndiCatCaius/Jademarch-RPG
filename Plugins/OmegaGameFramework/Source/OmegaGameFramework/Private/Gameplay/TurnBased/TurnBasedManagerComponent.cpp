@@ -36,24 +36,36 @@ void UTurnBasedManagerComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	// ...
 }
 
+TArray<UCombatantComponent*> UTurnBasedManagerComponent::GetTurnOrder()
+{
+	TArray<UCombatantComponent*> OutCombs;
+	for(auto* TempComb : TurnOrder)
+	{
+		if(TempComb)
+		{
+			OutCombs.Add(TempComb);
+		}
+	}
+	return OutCombs;
+}
+
 //Get Active Member
 UCombatantComponent* UTurnBasedManagerComponent::GetActiveTurnMember()
 {
-	if(TurnOrder.IsValidIndex(0))
+	if(ActiveTurnMember)
 	{
-		if(TurnOrder[0] != nullptr)
-		{
-			return TurnOrder[0];
-		}
-		else
-		{
-			return nullptr;
-		}
+		return ActiveTurnMember;
 	}
-	else
+	return nullptr;
+}
+
+UCombatantComponent* UTurnBasedManagerComponent::GetTurnMemberAtIndex(int32 Index)
+{
+	if(GetTurnOrder()[Index])
 	{
-		return nullptr;
+		return GetTurnOrder()[Index];
 	}
+	return nullptr;
 }
 
 //Add to Turn Order
@@ -117,36 +129,30 @@ TArray<UCombatantComponent*> UTurnBasedManagerComponent::GenerateTurnOrder()
 			}
 		}
 	}
+	OnTurnOrderGenerated.Broadcast(this);
 	return TurnOrder;
 }
+
 
 // NEXT TURN
 bool UTurnBasedManagerComponent::NextTurn(bool bGenerateIfEmpty, FString Flag, FGameplayTagContainer Tags, FString& FailReason)
 {
-	//Remove current member
-	if(GetActiveTurnMember() != nullptr)
+	//END CURRENT TURN
+	if(GetActiveTurnMember() != nullptr)		//If active turn member is valid
 	{
 		OnTurnEnd.Broadcast(GetActiveTurnMember(), Flag, Tags);
 		RemoveFromTurnOrder(GetActiveTurnMember(), Flag, Tags);
-        
-        /*if(GetActiveTurnMember()) // If new active member valid
-        {
-            //Function on Combatant Actor
-            if(DoesCombatantUseInterface(GetActiveTurnMember()))
-            {
-                IActorInterface_TurnOrderCombatant::Execute_OnTurnEnd(GetActiveTurnMember()->GetOwner(), this);
-            }
-        }*/
-		
 	}
 	
 	//If Empty and should regenerator
-	if(!TurnOrder.IsValidIndex(0) && bGenerateIfEmpty)
+	if(!GetTurnMemberAtIndex(0) && bGenerateIfEmpty)
 	{
 		GenerateTurnOrder();
 	}
 
-	if(GetActiveTurnMember() != nullptr)
+	//sELECT Member for turn
+	
+	if(GetTurnMemberAtIndex(0))
 	{
 		FString LocalFailReason;
 		if(TurnManager->FailBeingTurn(FailReason))	//When Failed to Start Turn
@@ -155,7 +161,8 @@ bool UTurnBasedManagerComponent::NextTurn(bool bGenerateIfEmpty, FString Flag, F
 			return false;
 		}
 		FailReason = "";
-		
+
+		ActiveTurnMember = GetTurnMemberAtIndex(0);
 		BeginTurn(GetActiveTurnMember(), Flag, Tags);
 		
 		//Function on Combatant Actor

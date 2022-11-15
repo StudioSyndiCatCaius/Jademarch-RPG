@@ -10,7 +10,7 @@ class UCombatantComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCombatantSetInGroup, UCombatantComponent*, Combatant, bool, InGroup);
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=("Omega Game Framework"), meta=(BlueprintSpawnableComponent))
 class OMEGAGAMEFRAMEWORK_API UCombatantGroupComponent : public UActorComponent
 {
 	GENERATED_BODY()

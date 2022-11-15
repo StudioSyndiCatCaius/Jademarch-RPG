@@ -507,6 +507,21 @@ UFlowNode* UFlowAsset::GetNodeFromGuid(FGuid Guid)
 	return nullptr;
 }
 
+TArray<FGuid> UFlowAsset::GetActiveNodeGuids()
+{
+	TArray<FGuid> OutGuid;
+	for(const UFlowNode* TempNode : GetActiveNodes())
+	{
+		OutGuid.Add(TempNode->GetGuid());
+	}
+	return OutGuid;
+}
+
+void UFlowAsset::ForceActivateNode(FGuid NodeGuid, FName InputName)
+{
+	TriggerInput(NodeGuid, InputName);
+}
+
 FFlowAssetSaveData UFlowAsset::SaveInstance(TArray<FFlowAssetSaveData>& SavedFlowInstances)
 {
 	FFlowAssetSaveData AssetRecord;

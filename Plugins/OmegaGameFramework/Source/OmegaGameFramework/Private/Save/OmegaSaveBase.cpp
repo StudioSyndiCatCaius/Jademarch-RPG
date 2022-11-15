@@ -111,4 +111,15 @@ FTransform UOmegaSaveBase::GetSaveProperty_Transform(const FString& Name)
 	return Prop_Transform.FindOrAdd(FName(Name));
 }
 
+void UOmegaSaveBase::SetSaveProperty_Json(const FString& Name, FJsonObjectWrapper Value)
+{
+	Prop_Json.Add(FName(Name), Value);
+}
+
+FJsonObjectWrapper UOmegaSaveBase::GetSaveProperty_Json(const FString& Name)
+{
+	return Prop_Json.FindOrAdd(FName(Name));
+
+}
+
 

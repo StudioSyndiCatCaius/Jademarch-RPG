@@ -8,7 +8,7 @@
 #include "GameplaySystemsComponent.generated.h"
 
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=("Omega Game Framework"), meta=(BlueprintSpawnableComponent))
 class OMEGAGAMEFRAMEWORK_API UGameplaySystemsComponent : public UActorComponent
 {
 	GENERATED_BODY()

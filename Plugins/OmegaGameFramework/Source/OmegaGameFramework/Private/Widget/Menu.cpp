@@ -25,6 +25,11 @@ void UMenu::OpenMenu(FGameplayTagContainer Tags, UObject* Context, APlayerContro
 		AddToPlayerScreen(200);
 		MenuOpened(Tags, Context, Flag);
 		//ANIMATION
+
+		if(OpenSound)
+		{
+			PlaySound(OpenSound);
+		}
 		
 		if(GetOpenAnimation())
 		{
@@ -67,6 +72,11 @@ void UMenu::CloseMenu(FGameplayTagContainer Tags, const FString& Flag)
 		}
 
 		SetVisibility(ESlateVisibility::HitTestInvisible);
+
+		if(CloseSound)
+		{
+			PlaySound(CloseSound);
+		}
 		
 		//ANIMATION
 

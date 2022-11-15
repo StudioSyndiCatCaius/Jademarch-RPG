@@ -16,9 +16,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnTurnEnd, UCombatantComponent*,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurnFail, FString, Reason);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnAddedToTurnOrder, UCombatantComponent*, Combatant, int32, Index, FString, Flag, FGameplayTagContainer, Tags);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnRemovedFromTurnOrder, UCombatantComponent*, Combatant, FString, Flag, FGameplayTagContainer, Tags);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurnOrderGenerated, UTurnBasedManagerComponent*, Component);
 
-
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=("Omega Game Framework"), meta=(BlueprintSpawnableComponent))
 class OMEGAGAMEFRAMEWORK_API UTurnBasedManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -47,21 +47,35 @@ public:
 	UPROPERTY()
 	UTurnManagerBase* TurnManager;
 	
-	UPROPERTY(BlueprintReadOnly, Category="TurnBased")
+	UPROPERTY()
 	TArray<UCombatantComponent*> TurnOrder;
+	
+	UFUNCTION(BlueprintPure, Category="TurnBased")
+	TArray<UCombatantComponent*> GetTurnOrder();
 
+	UPROPERTY()
+	UCombatantComponent* ActiveTurnMember;
+	
 	UFUNCTION(BlueprintPure, Category="TurnBased")
 	UCombatantComponent* GetActiveTurnMember();
 
+	UFUNCTION(BlueprintPure, Category="TurnBased")
+	UCombatantComponent* GetTurnMemberAtIndex(int32 Index);
+	
 	UFUNCTION(BlueprintCallable, Category="TurnBased", meta=(AdvancedDisplay="Flag, Tags"))
 	void AddToTurnOrder(UCombatantComponent* Combatant, FString Flag, FGameplayTagContainer Tags);
 
 	UFUNCTION(BlueprintCallable, Category="TurnBased", meta=(AdvancedDisplay="Flag, Tags"))
 	void RemoveFromTurnOrder(UCombatantComponent* Combatant, FString Flag, FGameplayTagContainer Tags);
+
+	// Turn Order
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTurnOrderGenerated OnTurnOrderGenerated;
 	
 	UFUNCTION(BlueprintCallable, Category="TurnBased")
 	TArray<UCombatantComponent*> GenerateTurnOrder();
-
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnTurnFail OnTurnFail;
 	

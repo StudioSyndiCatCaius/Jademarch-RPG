@@ -134,7 +134,9 @@ public:
 	UFUNCTION()
 	void RemoveSavedActorTags(AActor* Actor, FGameplayTagContainer Tags);
 
-	//DataAssets
+	//###############################################################################################
+	// Data Assets
+	//###############################################################################################
 	
 	UFUNCTION(BlueprintCallable, Category="Ω|SaveSubsystem|Assets")
 	void AddDataAssetToSaveCollection(UPrimaryDataAsset* Asset, bool bGlobal);
@@ -208,5 +210,12 @@ public:
 	UFUNCTION(BlueprintPure, Category="OmegaSaveSubsystem")
 	bool CustomSaveConditionsMet(FOmegaSaveConditions Conditions);
 
+	//###############################################################################################
+	// SAVING
+	//###############################################################################################
 	
+	UFUNCTION(BlueprintCallable, Category="OmegaSaveSubsystem")
+	void SaveObjectJsonData(UObject* Object);
+	UFUNCTION(BlueprintCallable, Category="OmegaSaveSubsystem")
+	void LoadObjectJsonData(UObject* Object);
 };

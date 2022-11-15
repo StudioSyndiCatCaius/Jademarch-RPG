@@ -74,6 +74,11 @@ public:
 	FWidgetAnimationDynamicEvent OpenDelegate;
 	UPROPERTY()
 	FWidgetAnimationDynamicEvent CloseDelegate;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* OpenSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* CloseSound;
 	
 	//Input
 	virtual bool InputBlocked_Implementation() override;

@@ -9,7 +9,7 @@
 #include "AsyncAction_GameplaySystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FShutdown, FString, Flag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFailed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFailedActivateSystem);
 
 UCLASS()
 class OMEGAFLOW_API UAsyncAction_GameplaySystem : public UBlueprintAsyncActionBase
@@ -22,7 +22,7 @@ public:
 	FShutdown OnShutdown;
 	
 	UPROPERTY(BlueprintAssignable)
-	FOnFailed Failed;
+	FOnFailedActivateSystem Failed;
 
 	UPROPERTY()
 	TSubclassOf<AOmegaGameplaySystem> LocalSystemClass;

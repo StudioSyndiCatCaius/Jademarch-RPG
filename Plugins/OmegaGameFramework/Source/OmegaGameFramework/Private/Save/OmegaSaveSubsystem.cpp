@@ -18,6 +18,7 @@
 #include "Preferences/GamePreferenceSubsystem.h"
 #include "Save/OmegaSaveCondition.h"
 
+
 void UOmegaSaveSubsystem::Initialize(FSubsystemCollectionBase& Colection)
 {
 	const FString LocalGlSaveName = GetMutableDefault<UOmegaSettings>()->GlobalSaveName;
@@ -118,6 +119,7 @@ bool UOmegaSaveSubsystem::Local_SaveGame(FString SlotName)
 	for(AActor* TempActor : ActorsForSaving)
 	{
 		IOmegaSaveInterface::Execute_OnGameFileSaved(TempActor, ActiveSaveData);
+		SaveObjectJsonData(TempActor);
 	}
 	//SaveGameplayModuleData
 	for(UOmegaGameplayModule* TempModule : GetGameInstance()->GetSubsystem<UOmegaGameManager>()->ActiveModules)
@@ -167,13 +169,14 @@ void UOmegaSaveSubsystem::StartGame(class UOmegaSaveGame* GameData, FGameplayTag
 	for(AActor* TempActor : ActorsForSaving)
 	{
 		IOmegaSaveInterface::Execute_OnGameFileStarted(TempActor, ActiveSaveData);
+		LoadObjectJsonData(TempActor);
 	}
 	
 	for(UOmegaGameplayModule* TempModule : GetGameInstance()->GetSubsystem<UOmegaGameManager>()->ActiveModules)
 	{
 		TempModule->GameFileStarted(ActiveSaveData);
 	}
-
+	
 	//GetGameInstance()->GetSubsystem<UGamePreferenceSubsystem>()->Local_PreferenceUpdateAll();
 }
 
@@ -422,5 +425,32 @@ bool UOmegaSaveSubsystem::CustomSaveConditionsMet(FOmegaSaveConditions Condition
 	}
 	
 	return true;
+}
+
+void UOmegaSaveSubsystem::SaveObjectJsonData(UObject* Object)
+{
+	if(Object && Object->GetClass()->ImplementsInterface(UOmegaSaveInterface::StaticClass()))
+	{
+		if(IOmegaSaveInterface::Execute_UseJsonSaveData(Object))
+		{
+			const FString LocalPropName = IOmegaSaveInterface::Execute_GetJsonPropertyName(Object);
+			const FJsonObjectWrapper LocalJsonData = IOmegaSaveInterface::Execute_SaveJsonData(Object);
+			GetSaveObject(false)->SetSaveProperty_Json(LocalPropName, LocalJsonData);
+		}
+	}
+}
+
+void UOmegaSaveSubsystem::LoadObjectJsonData(UObject* Object)
+{
+	if(Object && Object->GetClass()->ImplementsInterface(UOmegaSaveInterface::StaticClass()))
+	{
+		if(IOmegaSaveInterface::Execute_UseJsonSaveData(Object))
+		{
+			const FString LocalPropName = IOmegaSaveInterface::Execute_GetJsonPropertyName(Object);
+			const FJsonObjectWrapper LocalJsonData = GetSaveObject(false)->GetSaveProperty_Json(LocalPropName);
+			IOmegaSaveInterface::Execute_LoadJsonData(Object, LocalJsonData);
+			
+		}
+	}
 }
 

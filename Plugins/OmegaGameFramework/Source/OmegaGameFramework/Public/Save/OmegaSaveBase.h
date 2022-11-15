@@ -7,6 +7,7 @@
 #include "GameFramework/SaveGame.h"
 #include "GameplayTagContainer.h"
 #include "DataInterface_General.h"
+#include "JsonObjectWrapper.h"
 #include "Gameplay/GameplayTagsInterface.h"
 #include "Preferences/GamePreference.h"
 #include "UObject/SoftObjectPath.h"
@@ -136,6 +137,11 @@ public:
 	FTransform GetSaveProperty_Transform(const FString& Name);
 
 	//JsonProperty
-	
+	UPROPERTY()
+	TMap<FName, FJsonObjectWrapper> Prop_Json;
+	UFUNCTION(BlueprintCallable, Category="OmegaSave")
+	void SetSaveProperty_Json(const FString& Name, FJsonObjectWrapper Value);
+	UFUNCTION(BlueprintPure, Category="OmegaSave")
+	FJsonObjectWrapper GetSaveProperty_Json(const FString& Name);
 	
 };

@@ -230,6 +230,7 @@ private:
 	void TriggerCustomEvent(UFlowNode_SubGraph* Node, const FName& EventName) const;
 	void TriggerCustomOutput(const FName& EventName) const;
 
+	
 	void TriggerInput(const FGuid& NodeGuid, const FName& PinName);
 
 	void FinishNode(UFlowNode* Node);
@@ -255,11 +256,18 @@ public:
 	// Returns nodes that have any work left, not marked as Finished yet
 	UFUNCTION(BlueprintPure, Category = "Flow")
 	TArray<UFlowNode*> GetActiveNodes() const { return ActiveNodes; }
-
+	
+	UFUNCTION(BlueprintPure, Category = "Flow")
+	TArray<FGuid> GetActiveNodeGuids();
+	
 	// Returns nodes active in the past, done their work
 	UFUNCTION(BlueprintPure, Category = "Flow")
 	TArray<UFlowNode*> GetRecordedNodes() const { return RecordedNodes; }
 
+	UFUNCTION(BlueprintCallable, Category="Flow")
+	void ForceActivateNode(FGuid NodeGuid, FName InputName);
+
+	
 //////////////////////////////////////////////////////////////////////////
 // SaveGame
 	
