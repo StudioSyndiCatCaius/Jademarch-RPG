@@ -51,6 +51,10 @@
 		{
 			"Name": "CommonUI",
 			"Enabled": true
+		},
+		{
+			"Name": "Campaign_Main",
+			"Enabled": true
 		}
 	]
 }
