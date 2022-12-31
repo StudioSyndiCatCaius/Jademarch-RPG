@@ -30,7 +30,7 @@ void AOmegaGameplayEffect::BeginPlay()
 	switch (EffectLifetime)
 	{
 	case EEffectLifetime::EffectLifetime_Instant:
-		GetWorldTimerManager().SetTimer(LifetimeTimer, this, &AOmegaGameplayEffect::LifetimeEnd, 0.01f, false);
+		GetWorldTimerManager().SetTimer(LifetimeTimer, this, &AOmegaGameplayEffect::LifetimeEnd, 0.1f, false);
 		break;
 
 	case EEffectLifetime::EffectLifetime_Timer:
@@ -48,7 +48,7 @@ void AOmegaGameplayEffect::BeginPlay()
 	//CorrectContext
 	if(!EffectContext)
 	{
-		EffectContext = GetOwner();
+		EffectContext = nullptr;
 	}
 
 	Local_RemoveEffects(RemoveEffectsOnApplied);
@@ -96,7 +96,7 @@ void AOmegaGameplayEffect::Tick(float DeltaTime)
 void AOmegaGameplayEffect::TriggerEffect()
 {
 	float DamageVal = CalculateDamageValue();
-
+	float DamageFinal = 0;
 	// Damage Attributes //
 	if(EffectedAttribute)
 	{
@@ -106,16 +106,26 @@ void AOmegaGameplayEffect::TriggerEffect()
 		}
 		if(TargetedCombatant)
 		{
-			TargetedCombatant->ApplyAttributeDamage(EffectedAttribute, DamageVal, CombatantInstigator, EffectContext);
+			 DamageFinal = TargetedCombatant->ApplyAttributeDamage(EffectedAttribute, DamageVal, CombatantInstigator, EffectContext);
 		}
 	}
 	
 	//--Popup--//
 	if(bShowPopupOnTrigger)
 	{
-		
 		UOmegaEffectPopup* LocalPopup = Cast<UOmegaEffectPopup>(CreateWidget(GetWorld(), Local_GetPopupClass()));
 		LocalPopup->OwningEffect = this;
+		LocalPopup->Incoming_Color = GetTriggeredPopupColor();
+		if(UseCustomPopupText)
+		{
+			LocalPopup->Incoming_Text = GetTriggeredPopupText();
+		}
+		else
+		{
+			LocalPopup->Incoming_Text = UKismetTextLibrary::Conv_FloatToText(DamageFinal, ERoundingMode::FromZero);
+		}
+		
+			
 		if(TargetedCombatant)
 		{
 			LocalPopup->GetOwningPlayer()->ProjectWorldLocationToScreen(TargetedCombatant->GetOwner()->GetActorLocation(), LocalPopup->InitPosition);
@@ -128,8 +138,8 @@ void AOmegaGameplayEffect::TriggerEffect()
 	//Remove Effects
 	Local_RemoveEffects(RemoveEffectsOnTrigger);
 	
-	EffectApplied(DamageVal);
-	OnEffectTriggered.Broadcast(this, DamageVal);
+	EffectApplied(DamageFinal);
+	OnEffectTriggered.Broadcast(this, DamageFinal);
 	UE_LOG(LogTemp, Display, TEXT("Applied Effect"));
 	
 	if(EffectLifetime == EEffectLifetime::EffectLifetime_OnTrigger)
@@ -169,7 +179,3 @@ FSlateColor AOmegaGameplayEffect::GetTriggeredPopupColor_Implementation()
 	return NewColor;
 }
 
-FText AOmegaGameplayEffect::GetTriggeredPopupText_Implementation()
-{
-	return UKismetTextLibrary::Conv_FloatToText(CalculateDamageValue(), ERoundingMode::FromZero);
-}

@@ -73,6 +73,19 @@ FString UDataWidget::GetAssetLabel()
 	return OutString;
 }
 
+void UDataWidget::SetWidgetTagActive(FName Tag, bool bActive)
+{
+	if(bActive)
+	{
+		WidgetTags.AddUnique(Tag);
+	}
+	else
+	{
+		WidgetTags.Remove(Tag);
+	}
+	
+}
+
 bool UDataWidget::DataWidgetHasTag(FName Tag)
 {
 	return WidgetTags.Contains(Tag);

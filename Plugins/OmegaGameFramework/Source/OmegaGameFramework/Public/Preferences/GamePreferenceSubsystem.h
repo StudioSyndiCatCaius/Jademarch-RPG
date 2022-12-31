@@ -27,7 +27,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPrefernceTagUpdated, class UGame
  * 
  */
 
-UCLASS()
+UCLASS(DisplayName="Omega Subsystem: Preferences")
 class OMEGAGAMEFRAMEWORK_API UGamePreferenceSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()

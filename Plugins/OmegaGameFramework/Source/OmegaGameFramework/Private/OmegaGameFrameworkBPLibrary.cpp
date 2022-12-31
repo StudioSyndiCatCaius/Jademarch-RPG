@@ -219,3 +219,68 @@ UOmegaGameplayModule* UOmegaGameFrameworkBPLibrary::GetGameplayModule(const UObj
 	return nullptr;
 }
 
+void UOmegaGameFrameworkBPLibrary::FireGlobalEvent(const UObject* WorldContextObject, FName Event, UObject* Context)
+{
+	WorldContextObject->GetWorld()->GetGameInstance()->GetSubsystem<UOmegaGameManager>()->FireGlobalEvent(Event, Context);
+}
+
+void UOmegaGameFrameworkBPLibrary::OnFlagActiveReset(const UObject* WorldContextObject, const FString& Flag, bool bDeactivateFlagOnActive, TEnumAsByte<EOmegaFlagResult>& Outcome)
+{
+	UOmegaGameManager* LocalMod = WorldContextObject->GetWorld()->GetGameInstance()->GetSubsystem<UOmegaGameManager>();
+	if(LocalMod->IsFlagActive(Flag))
+	{
+		Outcome = EOmegaFlagResult::Flag_Active;
+		if(bDeactivateFlagOnActive)
+		{
+			LocalMod->SetFlagActive(Flag, false);
+		}
+	}
+	else
+	{
+		Outcome = EOmegaFlagResult::Flag_Inactive;
+	}
+}
+
+void UOmegaGameFrameworkBPLibrary::SetActorTagActive(AActor* Actor, FName Tag, bool bIsActive)
+{
+	if(Actor)
+	{
+		if(bIsActive)
+		{
+			Actor->Tags.AddUnique(Tag);
+		}
+		else
+		{
+			Actor->Tags.Remove(Tag);
+		}
+	}
+}
+
+void UOmegaGameFrameworkBPLibrary::SetComponentTagActive(UActorComponent* Component, FName Tag, bool bIsActive)
+{
+	if(Component)
+	{
+		if(bIsActive)
+		{
+			Component->ComponentTags.AddUnique(Tag);
+		}
+		else
+		{
+			Component->ComponentTags.Remove(Tag);
+		}
+	}
+}
+
+TArray<AActor*> UOmegaGameFrameworkBPLibrary::GetActorsFromComponents(TArray<UActorComponent*> Components)
+{
+	TArray<AActor*> OutActors;
+	for(const auto* TempComp : Components)
+	{
+		if(TempComp)
+		{
+			OutActors.AddUnique(TempComp->GetOwner());
+		}
+	}
+	return OutActors;
+}
+

@@ -15,3 +15,4 @@ class OMEGADEMO_API UTrait_Effects : public UOmegaDataTrait
 	GENERATED_BODY()
 	
 };
+

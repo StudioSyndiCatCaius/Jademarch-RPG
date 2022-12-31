@@ -140,10 +140,7 @@ FString UFlowNode::GetNodeDescription() const
 	return K2_GetNodeDescription();
 }
 
-FString UFlowNode::K2_GetNodeDescription_Implementation() const
-{
-	return "";
-}
+
 #endif
 
 UFlowAsset* UFlowNode::GetFlowAsset() const
@@ -236,15 +233,6 @@ void UFlowNode::RemoveUserOutput()
 	OutputPins.RemoveAt(OutputPins.Num() - 1);
 }
 
-bool UFlowNode::K2_CanUserAddOutput_Implementation() const
-{
-	return false;
-}
-
-bool UFlowNode::K2_CanUserAddInput_Implementation() const
-{
-	return false;
-}
 #endif
 
 TSet<UFlowNode*> UFlowNode::GetConnectedNodes() const

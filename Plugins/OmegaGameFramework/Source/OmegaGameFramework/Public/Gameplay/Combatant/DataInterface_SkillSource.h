@@ -8,7 +8,7 @@
 #include "DataInterface_SkillSource.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE()
+UINTERFACE(MinimalAPI)
 class UDataInterface_SkillSource : public UInterface
 {
 	GENERATED_BODY()
@@ -24,6 +24,6 @@ class OMEGAGAMEFRAMEWORK_API IDataInterface_SkillSource
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	UFUNCTION(BlueprintImplementableEvent, Category="Combatant")
+	UFUNCTION(BlueprintNativeEvent, Category="Combatant")
 	TArray<UPrimaryDataAsset*> GetSkills();
 };

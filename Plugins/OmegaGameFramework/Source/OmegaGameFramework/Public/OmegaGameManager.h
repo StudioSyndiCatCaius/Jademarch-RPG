@@ -49,13 +49,13 @@ public:
 		UPROPERTY()
 		TArray<UOmegaGameplayModule*> ActiveModules;
 	
-		UFUNCTION(BlueprintPure, meta = (CompactNodeTitle="Gameplay Module", DeterminesOutputType="Module"), Category="Ω|GameManager")
+		UFUNCTION(BlueprintPure, meta = (CompactNodeTitle="Gameplay Module", DeterminesOutputType="Module"), Category="Omega|Game Manager")
 		UOmegaGameplayModule* GetGameplayModule(TSubclassOf<UOmegaGameplayModule> Module);
 
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle="Gameplay Modules", DeterminesOutputType="Module"), Category="Ω|GameManager")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle="Gameplay Modules", DeterminesOutputType="Module"), Category="Omega|Game Manager")
 		TArray<UOmegaGameplayModule*> GetGameplayModules();
 
-	UFUNCTION(BlueprintCallable, Category="Ω|GameManager", meta=(AdvancedDisplay="Context"))
+	UFUNCTION(BlueprintCallable, Category="Omega|Game Manager", meta=(AdvancedDisplay="Context"))
 	void FireGlobalEvent(FName Event, UObject* Context);
 	
 	UPROPERTY(BlueprintAssignable)
@@ -67,14 +67,18 @@ public:
 	//################################################################
 	// FLAGS
 	//################################################################
-	UPROPERTY(BlueprintReadOnly, Category="Ω|GameManager")
+	UPROPERTY(BlueprintReadOnly, Category="Omega|Game Manager")
 	TArray<FString> Flags;
 
-	UFUNCTION(BlueprintCallable, Category="Ω|GameManager")
+	
+	UFUNCTION(BlueprintCallable, Category="Omega|Game Manager")
 	void SetFlagActive(FString Flag, bool bActive);
 
-	UFUNCTION(BlueprintPure, Category="Ω|GameManager")
+	UFUNCTION(BlueprintPure, Category="Omega|Game Manager")
 	bool IsFlagActive(FString Flag);
+
+	UFUNCTION(BlueprintCallable, Category="Omega|Game Manager")
+	void ClearAllFlags();
 	
 	/*
 	// Playtime

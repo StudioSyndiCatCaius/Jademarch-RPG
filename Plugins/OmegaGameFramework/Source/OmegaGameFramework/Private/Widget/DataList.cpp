@@ -307,6 +307,18 @@ TArray<UDataWidget*> UDataList::GetEntiresWithTag(FName Tag, bool bInvertGet)
 	return OutWidgets;
 }
 
+bool UDataList::AnyEntryHasTag(FName Tag)
+{
+	for(auto TempEntry : GetEntries())
+	{
+		if(TempEntry->DataWidgetHasTag(Tag))
+		{
+			return false;
+		}
+	}
+	return false;
+}
+
 
 //////////////////////
 ///Input////////
@@ -527,3 +539,4 @@ void UDataList::SetAllEntriesHighlighted(bool bHighlighted)
 		}
 	}
 }
+

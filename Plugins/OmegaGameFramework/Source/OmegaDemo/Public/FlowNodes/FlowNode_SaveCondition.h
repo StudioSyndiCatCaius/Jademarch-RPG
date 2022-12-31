@@ -16,7 +16,6 @@ class OMEGADEMO_API UFlowNode_SaveCondition : public UFlowNode
 	GENERATED_BODY()
 
 public:
-public:
 
 	UFlowNode_SaveCondition();
 	

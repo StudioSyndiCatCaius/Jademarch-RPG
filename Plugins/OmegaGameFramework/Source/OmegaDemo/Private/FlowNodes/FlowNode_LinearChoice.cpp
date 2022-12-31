@@ -23,10 +23,12 @@ void UFlowNode_LinearChoice::LocalChoiceSelect(UOmegaLinearChoice* Choice, int32
 	TriggerOutput(FName(OutputLocalName));
 }
 
-bool UFlowNode_LinearChoice::K2_CanUserAddOutput_Implementation() const
+#if WITH_EDITOR
+bool UFlowNode_LinearChoice::CanUserAddOutput() const
 {
 	return true;
 }
+#endif
 
 void UFlowNode_LinearChoice::ExecuteInput(const FName& PinName)
 {

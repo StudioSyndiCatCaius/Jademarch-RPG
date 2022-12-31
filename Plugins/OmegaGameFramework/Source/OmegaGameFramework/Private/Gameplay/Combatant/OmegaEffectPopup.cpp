@@ -14,11 +14,9 @@ void UOmegaEffectPopup::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if(GetDamageText())
-	{
-		GetDamageText()->SetText(OwningEffect->GetTriggeredPopupText());
-		GetDamageText()->SetColorAndOpacity(OwningEffect->GetTriggeredPopupColor());
-	}
+		GetDamageText()->SetText(Incoming_Text);
+		GetDamageText()->SetColorAndOpacity(Incoming_Color);
+
 	CurrentPosition = InitPosition;
 	SetPositionInViewport(InitPosition);
 	

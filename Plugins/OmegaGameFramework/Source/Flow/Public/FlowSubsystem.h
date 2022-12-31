@@ -18,13 +18,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimpleFlowComponentEvent, UFlowComp
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTaggedFlowComponentEvent, UFlowComponent*, Component, const FGameplayTagContainer&, Tags);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnFlowEventFinish, UFlowAsset*, FlowAsset, FName, Output, const FString&, Flag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnFlowNodeEntered, UFlowAsset*, FlowAsset, UFlowNode*, Node, FName, Input);
-/**
+
+/*
  * Flow Subsystem
  * - manages lifetime of Flow Graphs
  * - connects Flow Graphs with actors containing the Flow Component
  * - convenient base for project-specific systems
  */
-UCLASS()
+
+UCLASS(DisplayName="Omega Subsystem: Flow")
 class FLOW_API UFlowSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()

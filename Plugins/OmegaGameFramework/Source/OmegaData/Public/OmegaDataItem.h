@@ -3,20 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/DataAsset.h"
-
 #include "DataInterface_General.h"
 #include "Gameplay/GameplayTagsInterface.h"
-
 #include "OmegaDataTrait.h"
 #include "OmegaDataTraitCollection.h"
 #include "Data/DataAssetCollectionInterface.h"
 #include "Data/SoftPropertiesInterface.h"
 #include "Gameplay/DataInterface_AttributeModifier.h"
 #include "Gameplay/DataInterface_OmegaEffect.h"
+#include "Gameplay/Combatant/DataInterface_SkillSource.h"
+
 #include "OmegaDataItem.generated.h"
 
 /**
@@ -24,7 +25,7 @@
  */
 UCLASS()
 class OMEGADATA_API UOmegaDataItem : public UPrimaryDataAsset, public IDataInterface_General, public IGameplayTagsInterface, public IDataAssetCollectionInterface,
-																public ISoftPropertiesInterface, public IDataInterface_AttributeModifier, public IDataInterface_OmegaEffect
+																public ISoftPropertiesInterface, public IDataInterface_AttributeModifier, public IDataInterface_OmegaEffect, public IDataInterface_SkillSource
 {
 	GENERATED_BODY()
 
@@ -85,6 +86,12 @@ public:
 
 	//Function
 	UFUNCTION(BlueprintPure, Category="DataItem", meta=(DeterminesOutputType = "Class"))
+	UOmegaDataTrait* GetTraitByLabel(const FString& Label);
+
+	UFUNCTION(BlueprintPure, Category="DataItem", meta=(DeterminesOutputType = "Class"))
+	TArray<UOmegaDataTrait*> GetTraitsByLabel(const FString& Label);
+	
+	UFUNCTION(BlueprintPure, Category="DataItem", meta=(DeterminesOutputType = "Class"))
 	UOmegaDataTrait* GetTraitByType(TSubclassOf<UOmegaDataTrait> Class);
 	
 	UFUNCTION(BlueprintPure, Category="DataItem", meta=(DeterminesOutputType = "Class"))
@@ -101,7 +108,7 @@ public:
 	UOmegaDataTrait* GetTraitWithInterface(TSubclassOf<UInterface> Interface);
 
 	UFUNCTION(BlueprintPure, Category="DataItem")
-	TArray<UOmegaDataTrait*> GetTraitsWithInterface(TSubclassOf<UInterface> Interface);
+	TArray<UOmegaDataTrait*> GetTraitsWithInterface(const UClass* Interface);
 	
 //////////////////////
 /// DATA INTERFACE
@@ -133,19 +140,7 @@ FGameplayTag GetObjectGameplayCategory();
 
 	virtual TArray<FOmegaAttributeModifier> GetModifierValues_Implementation() override;
 	virtual TArray<FOmegaEffectContainer> GetOmegaEffects_Implementation() override;
-	
-	//Soft Propertoes
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="SoftPropertries", meta=(CompactNodeTitle="bool"))
-	bool GetSoftProperty_Bool(const FString& Property);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="SoftPropertries", meta=(CompactNodeTitle="int32"))
-	int32 GetSoftProperty_Int32(const FString& Property);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="SoftPropertries", meta=(CompactNodeTitle="float"))
-	float GetSoftProperty_Float(const FString& Property);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="SoftPropertries", meta=(CompactNodeTitle="string"))
-	FString GetSoftProperty_String(const FString& Property);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="SoftPropertries", meta=(CompactNodeTitle="object"))
-	UObject* GetSoftProperty_Object(const FString& Property);
+	virtual TArray<UPrimaryDataAsset*> GetSkills_Implementation() override;
 
 	UFUNCTION()
 	TMap<FString, FString> DEBUG_GetProperties();
@@ -164,4 +159,9 @@ FGameplayTag GetObjectGameplayCategory();
 	UFUNCTION(BlueprintPure, Category="DataItem|Properties")
 	bool GetItemProperty_Bool(const FString& Property);
 	*/
+	
+	//////////////////////
+	/// DATA INTERFACE
+	/////////////////////
+	
 };

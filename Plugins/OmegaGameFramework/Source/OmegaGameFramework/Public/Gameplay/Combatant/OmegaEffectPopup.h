@@ -23,8 +23,11 @@ public:
 	
 	UPROPERTY()
 	AOmegaGameplayEffect* OwningEffect;
-	
 
+	UPROPERTY()
+	FSlateColor Incoming_Color;
+	UPROPERTY()
+	FText Incoming_Text;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	UTextBlock* GetDamageText();

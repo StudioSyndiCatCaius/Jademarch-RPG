@@ -44,9 +44,11 @@ public:
 	UFlowNode_SimpleMessage();
 
 	virtual void ExecuteInput(const FName& PinName) override;
-	
-	virtual FString K2_GetNodeDescription_Implementation() const override;
 
+#if WITH_EDITOR
+	virtual FString GetNodeDescription() const override;
+#endif
+	
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category="Message")
 	UOmegaDataItem* Instigator;
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category="Message")

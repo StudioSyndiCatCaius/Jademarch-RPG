@@ -71,6 +71,11 @@ bool UOmegaGameManager::IsFlagActive(FString Flag)
 	return Flags.Contains(Flag);
 }
 
+void UOmegaGameManager::ClearAllFlags()
+{
+	Flags.Empty();
+}
+
 void UOmegaGameManager::AddGameplayLog(const FString& String, const FString& LogCategory)
 {
 	FGameplayLogEntry TempEntry;

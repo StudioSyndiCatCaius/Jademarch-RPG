@@ -176,6 +176,21 @@ public:
 	bool bShowPopupOnTrigger;
 	UPROPERTY(EditDefaultsOnly, Category="Popup")
 	TSubclassOf<UOmegaEffectPopup> PopupClass;
+	UPROPERTY(EditDefaultsOnly, Category="Popup")
+	bool UseCustomPopupText;
+	
+	
+	UFUNCTION(BlueprintImplementableEvent, Category="Popup")
+	FText GetTriggeredPopupText();
+	UFUNCTION(BlueprintNativeEvent, Category="Popup")
+	FSlateColor GetTriggeredPopupColor();
+
+	
+	//Misc
+	FTimerHandle LifetimeTimer;
+
+	float PastLifetime;
+	float RemainingLifetime;
 
 	TSubclassOf<UOmegaEffectPopup> Local_GetPopupClass()
 	{
@@ -188,17 +203,4 @@ public:
 			return UOmegaEffectPopup::StaticClass();
 		}
 	}
-
-	UFUNCTION(BlueprintNativeEvent, Category="Popup")
-	FText GetTriggeredPopupText();
-	UFUNCTION(BlueprintNativeEvent, Category="Popup")
-	FSlateColor GetTriggeredPopupColor();
-
-	
-	//Misc
-	FTimerHandle LifetimeTimer;
-
-	float PastLifetime;
-	float RemainingLifetime;
-	
 };

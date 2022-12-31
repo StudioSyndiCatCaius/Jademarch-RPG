@@ -39,8 +39,7 @@ void UOmegaSaveSubsystem::Initialize(FSubsystemCollectionBase& Colection)
 
 void UOmegaSaveSubsystem::Deinitialize()
 {
-	const FString LocalGlSaveName = GetMutableDefault<UOmegaSettings>()->GlobalSaveName;
-	UGameplayStatics::SaveGameToSlot(GlobalSaveData, LocalGlSaveName, 0);
+	SaveGlobalGame();
 }
 
 void UOmegaSaveSubsystem::GetSaveSlotName(int32 Slot, FString& OutName)
@@ -190,6 +189,12 @@ UOmegaSaveBase* UOmegaSaveSubsystem::GetSaveObject(bool Global)
 	{
 		return ActiveSaveData;
 	}
+}
+
+void UOmegaSaveSubsystem::SaveGlobalGame()
+{
+	const FString LocalGlSaveName = GetMutableDefault<UOmegaSettings>()->GlobalSaveName;
+	UGameplayStatics::SaveGameToSlot(GlobalSaveData, LocalGlSaveName, 0);
 }
 
 void UOmegaSaveSubsystem::SetStoryState(FGameplayTag StateTag, bool Global)

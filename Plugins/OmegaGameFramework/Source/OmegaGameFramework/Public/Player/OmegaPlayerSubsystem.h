@@ -21,7 +21,7 @@ class UUserWidget;
 class UHUDLayer;
 class UDataWidget;
 
-UCLASS()
+UCLASS(DisplayName="Omega Subsystem: Player")
 class OMEGAGAMEFRAMEWORK_API UOmegaPlayerSubsystem : public ULocalPlayerSubsystem
 {
 	GENERATED_BODY()

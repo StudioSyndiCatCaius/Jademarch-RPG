@@ -148,8 +148,7 @@ public:
 	UFUNCTION(BlueprintPure, BlueprintCallable, Category = "Ω|Widget|DataList")
 	UDataWidget* GetEntry(int32 Index);
 	
-	UFUNCTION(BlueprintPure, Category = "Ω|Widget|DataList")
-	TArray<UDataWidget*> GetEntiresWithTag(FName Tag, bool bInvertGet);
+
 
 	//INPUT
 	virtual void InputNavigate_Implementation(FVector2D Axis) override;
@@ -229,4 +228,13 @@ protected:
 	FOnDataListInputNavigate OnInputNavigate;
 	UPROPERTY(BlueprintAssignable)
 	FOnDataListInputPage OnInputPage;
+
+	//---------------------------------------------------------------------------------------------//
+	//	Tags
+	//---------------------------------------------------------------------------------------------//
+	UFUNCTION(BlueprintPure, Category = "Ω|Widget|DataList")
+	TArray<UDataWidget*> GetEntiresWithTag(FName Tag, bool bInvertGet);
+
+	UFUNCTION(BlueprintPure, Category = "Ω|Widget|DataList")
+	bool AnyEntryHasTag(FName Tag);
 };

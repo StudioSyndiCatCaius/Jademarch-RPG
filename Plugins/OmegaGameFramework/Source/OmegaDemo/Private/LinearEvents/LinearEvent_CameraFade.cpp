@@ -36,7 +36,7 @@ UFlowNode_Camera_Fade::UFlowNode_Camera_Fade()
 void UFlowNode_Camera_Fade::ExecuteInput(const FName& PinName)
 {
 	Super::ExecuteInput(PinName);
-	UOmegaLinearEventSubsystem* SystemRef = GetWorld()->GetSubsystem<UOmegaLinearEventSubsystem>();
+	//UOmegaLinearEventSubsystem* SystemRef = GetWorld()->GetSubsystem<UOmegaLinearEventSubsystem>();
 	
 	ULinearEvent_CameraFade* LocalEvent = NewObject<ULinearEvent_CameraFade>(GetWorld()->GetGameInstance(), ULinearEvent_CameraFade::StaticClass());
 	LocalEvent->EventEnded.AddDynamic(this, &UFlowNode_Camera_Fade::LocalFinish);

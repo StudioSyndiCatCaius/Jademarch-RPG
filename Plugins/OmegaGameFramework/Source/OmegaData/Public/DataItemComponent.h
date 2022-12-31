@@ -9,7 +9,7 @@
 
 
 UCLASS( ClassGroup=("Omega Game Framework"), meta=(BlueprintSpawnableComponent) )
-class OMEGADATA_API UDataItemComponent : public UActorComponent
+class OMEGADATA_API UDataItemComponent : public UActorComponent, public IDataInterface_AttributeModifier, public IDataInterface_SkillSource
 {
 	GENERATED_BODY()
 
@@ -39,5 +39,8 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category="DataItem")
 	UOmegaDataItem* GetDataItem();
+
+	virtual TArray<FOmegaAttributeModifier> GetModifierValues_Implementation() override;
+	virtual TArray<UPrimaryDataAsset*> GetSkills_Implementation() override;
 		
 };

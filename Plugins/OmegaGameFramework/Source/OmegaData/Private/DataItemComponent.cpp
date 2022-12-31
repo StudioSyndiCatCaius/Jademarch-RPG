@@ -22,6 +22,13 @@ void UDataItemComponent::BeginPlay()
 	Super::BeginPlay();
 
 	GetWorld()->GetGameInstance()->GetSubsystem<UOmegaDataSubsystem>()->RegisterDataComponent(this);
+
+	if(GetOwner()->GetComponentByClass(UCombatantComponent::StaticClass()))
+	{
+		UCombatantComponent* LocalCombatant = Cast<UCombatantComponent>(GetOwner()->GetComponentByClass(UCombatantComponent::StaticClass()));
+		LocalCombatant->AddAttrbuteModifier(this);
+		LocalCombatant->SetSkillSourceActive(this, true);
+	}
 	
 	// ...
 	
@@ -54,5 +61,23 @@ UOmegaDataItem* UDataItemComponent::GetDataItem()
 		return DataItem;
 	}
 	return nullptr;
+}
+
+TArray<FOmegaAttributeModifier> UDataItemComponent::GetModifierValues_Implementation()
+{
+	if(DataItem)
+	{
+		return IDataInterface_AttributeModifier::Execute_GetModifierValues(DataItem);
+	}
+	return IDataInterface_AttributeModifier::GetModifierValues_Implementation();
+}
+
+TArray<UPrimaryDataAsset*> UDataItemComponent::GetSkills_Implementation()
+{
+	if(DataItem)
+	{
+		return IDataInterface_SkillSource::Execute_GetSkills(DataItem);
+	}
+	return IDataInterface_SkillSource::GetSkills_Implementation();
 }
 

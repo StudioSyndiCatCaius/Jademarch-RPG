@@ -3,15 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "AttributeModifierContainer.h"
 #include "DataInterface_General.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
-#include "Combatant/DataInterface_SkillSource.h"
+#include "Gameplay/Combatant/DataInterface_SkillSource.h"
+#include "Gameplay/DataInterface_AttributeModifier.h"
 #include "Kismet/GameplayStatics.h"
 #include "Gameplay/CombatInputUtility.h"
-
 #include "Components/ActorComponent.h"
+
 #include "CombatantComponent.generated.h"
 
 class APawn;
@@ -54,7 +56,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCombatantNotify, UCombatantCom
 	(GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, ErrorText))
 
 UCLASS( ClassGroup=("Omega Game Framework"), meta=(BlueprintSpawnableComponent) )
-class OMEGAGAMEFRAMEWORK_API UCombatantComponent : public UActorComponent, public IDataInterface_General
+class OMEGAGAMEFRAMEWORK_API UCombatantComponent : public UActorComponent, public IDataInterface_General, public IDataInterface_SkillSource,
+																			public IDataInterface_AttributeModifier
 {
 	GENERATED_BODY()
 
@@ -84,6 +87,9 @@ public:
 
 	UPROPERTY()
 		class APawn* OwnerPawn;
+
+	UFUNCTION(BlueprintCallable, Category="Combatant|DataSource", DisplayName="Set MASTER Source Active")
+	void SetMasterDataSourceActive(UObject* Source, bool bActive);
 
 	////////////////////////////////////
 	////////// -- Abilities -- //////////
@@ -138,7 +144,7 @@ public:
 	UFUNCTION(BlueprintPure, Category="Faction")
 	FGameplayTag GetFactionTag();
 
-	UPROPERTY(EditAnywhere, Category = "Faction")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction")
 	TMap<FGameplayTag, TEnumAsByte<EFactionAffinity>> FactionAffinities;
 
 	UFUNCTION(BlueprintPure, Category="Faction")
@@ -152,7 +158,7 @@ public:
 	///////////////////////////////////
 
 	UFUNCTION(BlueprintPure, Category="Combatant|Skills")
-	TArray<UPrimaryDataAsset*> GetSkills();
+	TArray<UPrimaryDataAsset*> GetAllSkills();
 	
 	UPROPERTY(EditAnywhere, Category="Abilities")
 	TArray<UPrimaryDataAsset*> Skills;
@@ -163,7 +169,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Skills")
 	void RemoveSkill(UPrimaryDataAsset* Skill);
 
-	UFUNCTION(BlueprintCallable, Category="Combatant|DamageModifiers")
+	UFUNCTION(BlueprintCallable, Category="Combatant|DataSource")
 	bool SetSkillSourceActive(UObject* SkillSource, bool bActive);
 
 	UPROPERTY()
@@ -345,7 +351,6 @@ public:
 
 	void InitializeAttributes();
 	
-	
 	/////////
 	/// Damage Mods
 	/// //////
@@ -353,7 +358,7 @@ public:
 	UPROPERTY()
 	TArray<UObject*> DamageModifiers;
 
-	UFUNCTION(BlueprintCallable, Category="Combatant|DamageModifiers")
+	UFUNCTION(BlueprintCallable, Category="Combatant|DataSource")
 	bool SetDamageModifierActive(UObject* Modifier, bool bActive);
 
 	UFUNCTION(BlueprintPure, Category="Combatant|DamageModifiers")
@@ -365,6 +370,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category= "Attributes|Modifiers", meta = (AdvancedDisplay = "Category, Tags"))
 	UAttributeModifierContainer* CreateAttributeModifier(UOmegaAttribute* Attribute, float Increment, float Multiplier, FGameplayTagContainer Tags);
+
+	UFUNCTION(BlueprintCallable, Category="Combatant|DataSource")
+	void SetAttributeModifierActive(UObject* Modifier, bool bActive);
 	
 	UFUNCTION(BlueprintCallable, Category= "Attributes|Modifiers")
 	bool AddAttrbuteModifier(UObject* Modifier);
@@ -501,6 +509,15 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnCombatantNotify OnCombatantNotify;
+
+	///////////////////////////////////
+	////////// -- REDIRECT DATA -- //////////
+	///////////////////////////////////
+
+public:
+	
+	virtual TArray<FOmegaAttributeModifier> GetModifierValues_Implementation() override;
+	virtual TArray<UPrimaryDataAsset*> GetSkills_Implementation() override;
 };
 
 

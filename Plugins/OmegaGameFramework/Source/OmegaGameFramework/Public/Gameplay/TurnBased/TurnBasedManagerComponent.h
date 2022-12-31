@@ -124,9 +124,13 @@ public:
 	///////////////
 	///// Combatants ////
 	//////////////
-	UPROPERTY(BlueprintReadOnly, Category="TurnBased")
+	UPROPERTY()
 	TArray<UCombatantComponent*> RegisteredCombatants;
+	
+	UFUNCTION(BlueprintPure, Category="TurnBased")
+	TArray<UCombatantComponent*> GetRegisteredCombatants();
 
+	
 	UFUNCTION(BlueprintCallable, Category="TurnBased", meta=(AdvancedDisplay="Flag, Tags"))
 	void RegisterCombatant(UCombatantComponent* Combatant, FString Flag, FGameplayTagContainer Tags);
 

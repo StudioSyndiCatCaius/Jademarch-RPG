@@ -86,6 +86,13 @@ void UCombatantComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
+void UCombatantComponent::SetMasterDataSourceActive(UObject* Source, bool bActive)
+{
+	SetSkillSourceActive(Source, bActive);
+	SetAttributeModifierActive(Source, bActive);
+	SetDamageModifierActive(Source, bActive);
+}
+
 void UCombatantComponent::SetAbilityActive(bool bActive, AOmegaAbility* Ability)
 {
 	if(bActive)
@@ -574,7 +581,7 @@ int32 UCombatantComponent::GetAttributeLevel(UOmegaAttribute* Attribute)
 //////////////////
 /// Skills //////
 ////////////////
-TArray<UPrimaryDataAsset*> UCombatantComponent::GetSkills()
+TArray<UPrimaryDataAsset*> UCombatantComponent::GetAllSkills()
 {
 	TArray<UPrimaryDataAsset*> OutSkills = Skills;
 	for(auto* TempSource : Local_GetSkillSources())
@@ -602,17 +609,20 @@ void UCombatantComponent::RemoveSkill(UPrimaryDataAsset* Skill)
 
 bool UCombatantComponent::SetSkillSourceActive(UObject* SkillSource, bool bActive)
 {
-	if(!SkillSource)
+	if(!SkillSource )
 	{
 		return false;
 	}
-	if(bActive)
+	if(SkillSource->Implements<UDataInterface_SkillSource>())
 	{
-		Local_SkillSources.AddUnique(SkillSource);
-	}
-	else
-	{
-		Local_SkillSources.Remove(SkillSource);
+		if(bActive)
+		{
+			Local_SkillSources.AddUnique(SkillSource);
+		}
+		else
+		{
+			Local_SkillSources.Remove(SkillSource);
+		}
 	}
 	return true;
 }
@@ -766,6 +776,19 @@ UAttributeModifierContainer* UCombatantComponent::CreateAttributeModifier(UOmega
 	NewMod->Tags = Tags;
 	
 	return NewMod;
+}
+
+void UCombatantComponent::SetAttributeModifierActive(UObject* Modifier, bool bActive)
+{
+	if(bActive)
+	{
+		AddAttrbuteModifier(Modifier);
+	}
+	else
+	{
+		RemoveAttributeModifier(Modifier);
+	}
+	
 }
 
 bool UCombatantComponent::AddAttrbuteModifier(UObject* Modifier)
@@ -1195,6 +1218,7 @@ void UCombatantComponent::CombatantNotify(FName Notify, const FString& Payload)
 	OnCombatantNotify.Broadcast(this, Notify, Payload);
 }
 
+
 ///////////////////
 /// Faction ////
 /////////////////
@@ -1244,4 +1268,20 @@ TArray<UCombatantComponent*> UCombatantComponent::FilterCombatantsByAffinity(TAr
 	}
 	return OutCombatants;
 }
+
+///////////////////////////////////
+////////// -- REDIRECT DATA -- //////////
+///////////////////////////////////
+
+TArray<FOmegaAttributeModifier> UCombatantComponent::GetModifierValues_Implementation()
+{
+	return GetAllModifierValues();
+}
+
+TArray<UPrimaryDataAsset*> UCombatantComponent::GetSkills_Implementation()
+{
+	return GetAllSkills();
+}
+
+
 

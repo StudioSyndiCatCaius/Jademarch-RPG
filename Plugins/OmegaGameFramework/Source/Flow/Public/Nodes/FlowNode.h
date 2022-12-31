@@ -92,7 +92,7 @@ public:
 
 protected:
 	// Short summary of node's content - displayed over node as NodeInfoPopup
-	UFUNCTION(BlueprintNativeEvent, Category = "FlowNode", meta = (DisplayName = "GetNodeDescription"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "FlowNode", meta = (DisplayName = "GetNodeDescription"))
 	FString K2_GetNodeDescription() const;
 
 	// Inherits Guid after graph node
@@ -158,10 +158,10 @@ public:
 #endif
 
 protected:
-	UFUNCTION(BlueprintNativeEvent, Category = "FlowNode", meta = (DisplayName = "CanUserAddInput"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "FlowNode", meta = (DisplayName = "CanUserAddInput"))
 	bool K2_CanUserAddInput() const;
 
-	UFUNCTION(BlueprintNativeEvent, Category = "FlowNode", meta = (DisplayName = "CanUserAddOutput"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "FlowNode", meta = (DisplayName = "CanUserAddOutput"))
 	bool K2_CanUserAddOutput() const;
 
 //////////////////////////////////////////////////////////////////////////

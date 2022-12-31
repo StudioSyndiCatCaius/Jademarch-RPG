@@ -75,7 +75,8 @@ void UFlowNode_SimpleMessage::ExecuteInput(const FName& PinName)
 	TriggerOutput("Begin", true, false);
 }
 
-FString UFlowNode_SimpleMessage::K2_GetNodeDescription_Implementation() const
+#if WITH_EDITOR
+FString UFlowNode_SimpleMessage::GetNodeDescription() const
 {
 	FText SpeakerString;
 	if(Instigator)
@@ -87,6 +88,7 @@ FString UFlowNode_SimpleMessage::K2_GetNodeDescription_Implementation() const
 
 	return OutText.ToString();
 }
+#endif
 
 void UFlowNode_SimpleMessage::LocalFinish(const FString& Flag)
 {

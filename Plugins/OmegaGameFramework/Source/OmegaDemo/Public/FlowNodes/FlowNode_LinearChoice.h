@@ -29,7 +29,9 @@ public:
 	UFUNCTION()
 	void LocalChoiceSelect(UOmegaLinearChoice* Choice, int32 Index);
 
+#if WITH_EDITOR
+	virtual bool CanUserAddOutput() const override;
+#endif
 	
-	virtual bool K2_CanUserAddOutput_Implementation() const override;
 	virtual void ExecuteInput(const FName& PinName) override;
 };

@@ -61,7 +61,7 @@ UCombatantComponent* UTurnBasedManagerComponent::GetActiveTurnMember()
 
 UCombatantComponent* UTurnBasedManagerComponent::GetTurnMemberAtIndex(int32 Index)
 {
-	if(GetTurnOrder()[Index])
+	if(GetTurnOrder().IsValidIndex(Index))
 	{
 		return GetTurnOrder()[Index];
 	}
@@ -223,6 +223,18 @@ void UTurnBasedManagerComponent::ClearTurnOrder(FString Flag, FGameplayTagContai
 }
 
 
+TArray<UCombatantComponent*> UTurnBasedManagerComponent::GetRegisteredCombatants()
+{
+	TArray<UCombatantComponent*> OutComs;
+	for(auto* TempCom : RegisteredCombatants)
+	{
+		if(TempCom)
+		{
+			OutComs.Add(TempCom);
+		}
+	}
+	return OutComs;
+}
 
 // REGISTER
 void UTurnBasedManagerComponent::RegisterCombatant(UCombatantComponent* Combatant, FString Flag, FGameplayTagContainer Tags)

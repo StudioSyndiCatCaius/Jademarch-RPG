@@ -20,6 +20,7 @@ AOmegaGameplaySystem::AOmegaGameplaySystem()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	SetActorHiddenInGame(true);
+	bIsSpatiallyLoaded = false;
 	
 }
 
@@ -105,7 +106,10 @@ void AOmegaGameplaySystem::Shutdown(FString Flag)
 	// Remove Player Widgets
 	for (class UHUDLayer* TempWidget : ActivePlayerWidgets)
 	{
-		TempWidget->RemoveFromParent();
+		if(TempWidget)
+		{
+			TempWidget->RemoveFromParent();
+		}
 	}
 	OnSystemShutdown.Broadcast(Flag);
 	SystemShutdown(Flag);

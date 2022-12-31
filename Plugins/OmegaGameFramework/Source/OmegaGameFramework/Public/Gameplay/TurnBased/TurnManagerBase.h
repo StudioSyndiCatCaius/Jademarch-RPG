@@ -31,4 +31,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	bool FailBeingTurn(FString& FailReason);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	bool BlockFromTurnOrder(UCombatantComponent* Combatant);
 };

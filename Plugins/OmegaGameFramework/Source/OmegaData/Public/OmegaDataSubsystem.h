@@ -11,7 +11,7 @@
 
 class UOmegaDataItem;
 
-UCLASS()
+UCLASS(DisplayName="Omega Subsystem: Data Items")
 class OMEGADATA_API UOmegaDataSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
