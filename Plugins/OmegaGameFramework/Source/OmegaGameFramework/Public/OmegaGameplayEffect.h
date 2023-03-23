@@ -66,8 +66,13 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-public:	
+public:
+
+	UPROPERTY(EditDefaultsOnly, Category="Effects")
+	TArray<FName> ActorsTagsGranted;
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -79,12 +84,18 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnEffectTriggered OnEffectTriggered;
-	
-	UFUNCTION(BlueprintImplementableEvent, Category = "Ω|Gameplay|Effects")
-		void EffectBeginPlay(UObject* Context);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Ω|Gameplay|Effects")
-		void LifetimeUpdated(float TimeElapsed, float TimeRemaining);
+		FHitResult GetImpactHitResult();
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Ω|Gameplay|Effects")
+	void EffectBeginPlay(UObject* Context);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Ω|Gameplay|Effects")
+	UOmegaDamageType* GetDamageType(UObject* Context);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Ω|Gameplay|Effects")
+	void LifetimeUpdated(float TimeElapsed, float TimeRemaining);
 
 	UPROPERTY(BlueprintReadOnly, Category = "General")
 	UCombatantComponent* CombatantInstigator;
@@ -92,7 +103,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "General")
 	UCombatantComponent* TargetedCombatant;
 
-	UPROPERTY(BlueprintReadOnly, Category = "General")
+	UPROPERTY(BlueprintReadOnly, Category = "General", VisibleInstanceOnly)
 	UObject* EffectContext;
 	
 	//-----VOLUME-----//

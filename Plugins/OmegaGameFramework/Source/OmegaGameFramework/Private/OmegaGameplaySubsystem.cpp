@@ -62,7 +62,7 @@ AOmegaGameplaySystem* UOmegaGameplaySubsystem::ActivateGameplaySystem(TSubclassO
 			//Shutdown Blocked Systems
 			for(auto* TempSys : GetActiveSystemsWithTags(DummySystem->BlockSystemTags))
 			{
-				TempSys->Shutdown("Canceled");
+				TempSys->Shutdown(DummySystem, "Canceled");
 			}
 			
 			//Finish & Activate
@@ -75,13 +75,13 @@ AOmegaGameplaySystem* UOmegaGameplaySubsystem::ActivateGameplaySystem(TSubclassO
 	return nullptr;
 }
 
-bool UOmegaGameplaySubsystem::ShutdownGameplaySystem(TSubclassOf<AOmegaGameplaySystem> Class, FString Flag)
+bool UOmegaGameplaySubsystem::ShutdownGameplaySystem(TSubclassOf<AOmegaGameplaySystem> Class, UObject* Context, FString Flag)
 {
 	bool bIsActive = false;
 	AOmegaGameplaySystem* TempSystem = GetGameplaySystem(Class, bIsActive);
 	if (TempSystem)
 	{
-		TempSystem->Shutdown(Flag);
+		TempSystem->Shutdown(Context, Flag);
 		return true;
 	}
 	return false;
@@ -93,7 +93,7 @@ AOmegaGameplaySystem* UOmegaGameplaySubsystem::GetGameplaySystem(TSubclassOf<AOm
 
 	for (class AOmegaGameplaySystem* TempSystem : ActiveSystems)
 	{
-		if (TempSystem->GetClass() == Class && !DummyObject)
+		if (TempSystem->GetClass()->IsChildOf(Class) && !DummyObject)
 		{
 			DummyObject = TempSystem;
 		}
@@ -180,11 +180,21 @@ APlayerController* UOmegaGameplaySubsystem::GetPlayerController(int32 Index)
 	return UGameplayStatics::GetPlayerController(this, Index);
 }
 
+void UOmegaGameplaySubsystem::SetGameplayState(FGameplayTag State)
+{
+	if(State != GameplayState)
+	{
+		GameplayState = State;
+		OnGameplayStateChange.Broadcast(GameplayState);
+	}
+}
+
 void UOmegaGameplaySubsystem::Native_RegisterCombatant(UCombatantComponent* Combatant, bool bRegistered)
 {
 	if(bRegistered)
 	{
 		ActiveCombatants.AddUnique(Combatant);
+		Combatant->OnDamaged.AddDynamic(this, &UOmegaGameplaySubsystem::UOmegaGameplaySubsystem::Native_OnDamaged);
 		OnCombatantRegistered.Broadcast(Combatant);
 	}
 	else
@@ -195,6 +205,11 @@ void UOmegaGameplaySubsystem::Native_RegisterCombatant(UCombatantComponent* Comb
 		
 }
 
+void UOmegaGameplaySubsystem::Native_OnDamaged(UCombatantComponent* Combatant, UOmegaAttribute* Attribute,
+	float FinalDamage, UCombatantComponent* Instigator, UOmegaDamageType* DamageType, FHitResult Hit)
+{
+	OnCombatantDamaged.Broadcast(Combatant, Attribute, FinalDamage, Instigator, DamageType, Hit);
+}
 
 TArray<UCombatantComponent*> UOmegaGameplaySubsystem::GetAllCombatants()
 {

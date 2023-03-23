@@ -21,6 +21,7 @@
 
 class AOmegaGameplaySystem;
 class UOmegaGameplayModule;
+class UGamePreferenceFloat;
 
 UENUM(BlueprintType)
 enum class EOmegaInputModeType : uint8
@@ -42,8 +43,12 @@ public:
 	TArray<TSubclassOf<AOmegaGameplaySystem>> AutoActivatedGameplaySystems;
 
 	TArray<TSubclassOf<UOmegaGameplayModule>> GetGameplayModuleClasses() const;
+
+	//Will automatically scan these directories at startup to try and load and actiavate modules from them. NOTE: This can be a slow process. Try and only set these paths to folders containing GameplayModules.
+	UPROPERTY(EditAnywhere, config, Category = "Modules", meta = (MetaClass = "OmegaGameplayModule"))
+	TArray<FDirectoryPath> AutoModuleScanPaths;
 	
-	UPROPERTY(EditAnywhere, config, Category = "Gameplay", meta = (MetaClass = "OmegaGameplayModule"))
+	UPROPERTY(EditAnywhere, config, Category = "Modules", meta = (MetaClass = "OmegaGameplayModule"))
 	TArray<FSoftClassPath> RegisteredGameplayModules;
 
 	UPROPERTY()
@@ -83,4 +88,24 @@ public:
 	//Gives unique IDs to Attributes for quick access
 	UPROPERTY(EditAnywhere, config, Category = "Combatant", meta=(MetaClass="OmegaAttribute"))
 	TMap<FString, FSoftObjectPath> AttributeIDs;
+
+	//########################################################
+	//BGM
+	//########################################################
+	UPROPERTY(EditAnywhere, config, Category = "BGM")
+	float BGM_FadeDuration = 0.5;
+
+	UPROPERTY(EditAnywhere, config, Category = "BGM", meta=(MetaClass="GamePreferenceFloat"))
+	FSoftObjectPath BGM_VolumePreference;
+
+	//########################################################
+	//Dyna Cam
+	//########################################################
+	UPROPERTY(EditAnywhere, config, Category = "Dynamic Camera", meta = (MetaClass = "CameraActor"))
+	FSoftClassPath DynamicCameraClass;
+
+	//########################################################
+	//Zones
+	//########################################################
+	
 };

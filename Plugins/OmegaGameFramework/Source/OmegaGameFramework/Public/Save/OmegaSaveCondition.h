@@ -16,6 +16,26 @@ class OMEGAGAMEFRAMEWORK_API UOmegaSaveCondition : public UObject
 
 public:
 
+	UPROPERTY(Transient)
+	mutable UWorld* WorldPrivate = nullptr;
+	
+	UOmegaSaveCondition(const FObjectInitializer& ObjectInitializer);
+	virtual UWorld* GetWorld() const override;
+	UFUNCTION()
+	virtual UGameInstance* GetGameInstance() const;
+	
 	UFUNCTION(BlueprintNativeEvent, Category="OmegaSaveCondition")
 	bool CheckSaveCondition(UOmegaSaveSubsystem* SaveSubsystem) const;
+};
+
+
+UCLASS(BlueprintType, Blueprintable)
+class OMEGAGAMEFRAMEWORK_API UOmegaSaveConditionCollection : public UPrimaryDataAsset
+{
+	GENERATED_BODY()
+	
+public:
+	
+	UPROPERTY(BlueprintReadOnly, Category="OmegaSaveConditions", instanced, EditAnywhere)
+	TArray<class UOmegaSaveCondition*> Conditions;
 };

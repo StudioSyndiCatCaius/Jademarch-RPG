@@ -7,7 +7,7 @@
 #include "Widget/Menu.h"
 #include "AsyncAction_Menu.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMenuClosed, FGameplayTagContainer, CloseTags, FString, CloseFlag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnMenuClosed, FGameplayTagContainer, CloseTags, UObject*, CloseContext, FString, CloseFlag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMenuFailed);
 
 UCLASS()
@@ -34,11 +34,11 @@ public:
 	FGameplayTagContainer TagsRef;
 
 	UFUNCTION()
-	void NativeShutdown(FGameplayTagContainer CloseTags, const FString OutFlag);
+	void NativeShutdown(FGameplayTagContainer CloseTags, UObject* Context, const FString OutFlag);
 	
 	virtual void Activate() override;
-	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = "true"), Category="Omega|GameplayTasks")
-	static UAsyncAction_Menu* OpenMenu(APlayerController* Player, const TSubclassOf<UMenu> MenuClass, UObject* Context, const FGameplayTagContainer OpenTags, const FString& OpenFlag);
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = "true", WorldContext="WorldContextObject", AdvancedDisplay="Player, OpenTags, OpenFlag"), Category="Omega|GameplayTasks")
+	static UAsyncAction_Menu* OpenMenu(UObject* WorldContextObject, APlayerController* Player, const TSubclassOf<UMenu> MenuClass, UObject* Context, const FGameplayTagContainer OpenTags, const FString& OpenFlag);
 
 	
 };

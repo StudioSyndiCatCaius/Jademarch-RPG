@@ -67,5 +67,27 @@ public:
 	UDataItemComponent* GetComponentByDataItem(UOmegaDataItem* DataItem);
 
 	UFUNCTION(BlueprintPure, Category="OmegaDataSubsytem|Data Item Component")
+	TArray<UDataItemComponent*> GetComponentsByDataItem(UOmegaDataItem* DataItem);
+
+	UFUNCTION(BlueprintPure, Category="OmegaDataSubsytem|Data Item Component", meta=(AdvancedDisplay="Exact"))
+	TArray<UDataItemComponent*> GetComponentsOfDataItemWithTags(UOmegaDataItem* DataItem, FGameplayTagContainer EntityTags, bool Exact);
+	
+	UFUNCTION(BlueprintPure, Category="OmegaDataSubsytem|Data Item Component")
 	AActor* GetActorByDataItem(UOmegaDataItem* DataItem);
+
+	UFUNCTION(BlueprintPure, Category="OmegaDataSubsytem|Data Item Component")
+	TArray<AActor*> GetActorsByDataItem(UOmegaDataItem* DataItem);
+	
+};
+
+UCLASS()
+class OMEGADATA_API UOmegaDataItemFunctions : public UBlueprintFunctionLibrary
+{
+	GENERATED_BODY()
+
+	UFUNCTION(BlueprintCallable, Category="Omega|Data Items")
+	static UOmegaDataTrait* TryGetDataTraitByClass(UObject* Source, TSubclassOf<UOmegaDataTrait> Class);
+
+	UFUNCTION(BlueprintCallable, Category="Omega|Data Items")
+	static UOmegaDataTrait* TryGetDataTraitByInterface(UObject* Source, TSubclassOf<UInterface> Class);
 };

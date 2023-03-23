@@ -35,26 +35,6 @@
 			]
 		},
 		{
-			"Name": "Actions",
-			"Type": "Runtime",
-			"LoadingPhase": "PreDefault",
-			"PlatformAllowList": [
-				"Win64",
-				"Linux",
-				"Mac"
-			]
-		},
-		{
-			"Name": "ActionsEditor",
-			"Type": "UncookedOnly",
-			"LoadingPhase": "PreDefault",
-			"PlatformAllowList": [
-				"Win64",
-				"Linux",
-				"Mac"
-			]
-		},
-		{
 			"Name": "OmegaFlow",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
@@ -128,21 +108,6 @@
 			"Name": "OmegaParser",
 			"Type": "Runtime",
 			"loadingPhase": "Default"
-		},
-		{
-			"Name": "OmegaSignal",
-			"Type": "Runtime",
-			"loadingPhase": "Default"
-		},
-		{
-			"Name": "OmegaSignalEditor",
-			"Type": "UncookedOnly",
-			"loadingPhase": "PreDefault"
-		},
-		{
-			"Name": "OmegaInput",
-			"Type": "Runtime",
-			"loadingPhase": "PreDefault"
 		}
 	],
 	"Plugins": [

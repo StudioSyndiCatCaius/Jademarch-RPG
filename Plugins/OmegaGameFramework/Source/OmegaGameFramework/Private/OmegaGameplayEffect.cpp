@@ -53,7 +53,30 @@ void AOmegaGameplayEffect::BeginPlay()
 
 	Local_RemoveEffects(RemoveEffectsOnApplied);
 	
+	if(TargetedCombatant)
+	{
+		for(FName TempTag : ActorsTagsGranted)
+		{
+			TargetedCombatant->GetOwner()->Tags.Add(TempTag);
+		}
+	}
+	
 	EffectBeginPlay(EffectContext);
+}
+
+void AOmegaGameplayEffect::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	if(EndPlayReason == EEndPlayReason::Destroyed)
+	{
+		if(TargetedCombatant)
+		{
+			for(FName TempTag : ActorsTagsGranted)
+			{
+				TargetedCombatant->GetOwner()->Tags.Remove(TempTag);
+			}
+		}
+	}
 }
 
 //Trigger the Effect
@@ -106,7 +129,7 @@ void AOmegaGameplayEffect::TriggerEffect()
 		}
 		if(TargetedCombatant)
 		{
-			 DamageFinal = TargetedCombatant->ApplyAttributeDamage(EffectedAttribute, DamageVal, CombatantInstigator, EffectContext);
+			 DamageFinal = TargetedCombatant->ApplyAttributeDamage(EffectedAttribute, DamageVal, CombatantInstigator, EffectContext, GetDamageType(EffectContext), GetImpactHitResult());
 		}
 	}
 	
@@ -147,6 +170,11 @@ void AOmegaGameplayEffect::TriggerEffect()
 		K2_DestroyActor();
 	}
 	
+}
+
+UOmegaDamageType* AOmegaGameplayEffect::GetDamageType_Implementation(UObject* Context)
+{
+	return nullptr;
 }
 
 

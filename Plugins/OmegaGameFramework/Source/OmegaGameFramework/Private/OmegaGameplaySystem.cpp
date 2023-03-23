@@ -11,16 +11,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/OmegaPlayerSubsystem.h"
 
-
-
-
 // Sets default values
 AOmegaGameplaySystem::AOmegaGameplaySystem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	SetActorHiddenInGame(true);
-	bIsSpatiallyLoaded = false;
+	//bIsSpatiallyLoaded = false;
 	
 }
 
@@ -51,6 +48,13 @@ void AOmegaGameplaySystem::BeginPlay()
 			UHUDLayer* CreatedLayer = LocalSystem->AddHUDLayer(TempWidgetClass, this);
 			ActivePlayerWidgets.Add(CreatedLayer);
 		}
+		//Set Input Mode
+		{
+			if(PlayerInputMode)
+			{
+				UGameplayStatics::GetPlayerController(this, 0)->GetLocalPlayer()->GetSubsystem<UOmegaPlayerSubsystem>()->SetCustomInputMode(PlayerInputMode);
+			}
+		}
 		// Add New Mapping Context
 		for(UInputMappingContext* TempMap : AddPlayerInputMapping)
 		{
@@ -65,9 +69,13 @@ void AOmegaGameplaySystem::BeginPlay()
 	GamePrefSystemRef->OnFloatPreferenceUpdated.AddDynamic(this, &AOmegaGameplaySystem::GamePreferenceUpdatedFloat);
 	SubsysRef = GEngine->GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>();
 	*/
+
+	UOmegaGameplaySubsystem* GameplaySubsys = GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>();
+
+	GameplaySubsys->OnGameplayStateChange.AddDynamic(this, &AOmegaGameplaySystem::OnGameplayStateChange);
 	
 	//GRANT ABILITIES
-	for(auto* TempComb : GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>()->GetAllCombatants())
+	for(auto* TempComb : GameplaySubsys->GetAllCombatants())
 	{
 		Local_GrantAbilities(TempComb);
 	}
@@ -93,53 +101,87 @@ void AOmegaGameplaySystem::Tick(float DeltaTime)
 
 }
 
-void AOmegaGameplaySystem::Shutdown(FString Flag)
+void AOmegaGameplaySystem::SystemActivated_Implementation(UObject* Context, const FString& Flag)
 {
+	
+}
+
+void AOmegaGameplaySystem::SystemShutdown_Implementation(UObject* Context, const FString& Flag)
+{
+	
+}
+
+void AOmegaGameplaySystem::Shutdown(UObject* Context, FString Flag)
+{
+	// Block if already shutting down;
 	if(bIsInShutdown)
 	{
 		return;
 	}
+
+	
+	Shutdown_Context = nullptr;
+	if(Context)
+	{
+		Shutdown_Context = Context;
+	}
+	Shutdown_Flag = Flag;
+	
 	bIsInShutdown = true;
-	TArray <AActor*> FoundPlayers;
-	UGameplayStatics::GetAllActorsOfClass(this, APlayerController::StaticClass(), FoundPlayers);
+	OnBeginShutdown(Shutdown_Context, Shutdown_Flag);
 	
-	// Remove Player Widgets
-	for (class UHUDLayer* TempWidget : ActivePlayerWidgets)
-	{
-		if(TempWidget)
-		{
-			TempWidget->RemoveFromParent();
-		}
-	}
-	OnSystemShutdown.Broadcast(Flag);
-	SystemShutdown(Flag);
-	if (SubsysRef)
-	{
-		SubsysRef->NativeRemoveSystem(this);
-	}
+}
 
-	//Remove Mapping Context
-	for (AActor* TempActor : FoundPlayers)
-	{
-		for(UInputMappingContext* TempMap : AddPlayerInputMapping)
-		{
-			Cast<APlayerController>(TempActor)->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->RemoveMappingContext(TempMap);
-		}
-	}
+void AOmegaGameplaySystem::OnBeginShutdown_Implementation(UObject* Context, const FString& Flag)
+{
+	CompleteShutdown();
+}
 
-	//Remove Abilities
-	for(FGameplaySystemAbilityRules TempData : GrantedAbilities)
+void AOmegaGameplaySystem::CompleteShutdown()
+{
+	if(bIsInShutdown)
 	{
-		for(auto* TempComb : GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>()->GetAllCombatants())
-		{
-			TempComb->UngrantAbility(TempData.AbilityClass);
-		}	
-	}
-
-	//FLAGS
-	Local_SetFlagsActive(false);
+		TArray <AActor*> FoundPlayers;
+		UGameplayStatics::GetAllActorsOfClass(this, APlayerController::StaticClass(), FoundPlayers);
 	
-	K2_DestroyActor();
+		// Remove Player Widgets
+		for (class UHUDLayer* TempWidget : ActivePlayerWidgets)
+		{
+			if(TempWidget)
+			{
+				TempWidget->RemoveFromParent();
+			}
+		}
+		OnSystemShutdown.Broadcast(Shutdown_Context, Shutdown_Flag);
+		SystemShutdown(Shutdown_Context, Shutdown_Flag);
+		if (SubsysRef)
+		{
+			SubsysRef->NativeRemoveSystem(this);
+		}
+
+		//Remove Mapping Context
+		for (AActor* TempActor : FoundPlayers)
+		{
+			for(UInputMappingContext* TempMap : AddPlayerInputMapping)
+			{
+				Cast<APlayerController>(TempActor)->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->RemoveMappingContext(TempMap);
+			}
+		}
+
+		//Remove Abilities
+		for(FGameplaySystemAbilityRules TempData : GrantedAbilities)
+		{
+			for(auto* TempComb : GetWorld()->GetSubsystem<UOmegaGameplaySubsystem>()->GetAllCombatants())
+			{
+				TempComb->UngrantAbility(TempData.AbilityClass);
+			}	
+		}
+
+		//FLAGS
+		Local_SetFlagsActive(false);
+	
+		K2_DestroyActor();
+	}
 }
 
 void AOmegaGameplaySystem::Local_GrantAbilities(UCombatantComponent* Combatant)

@@ -20,7 +20,7 @@ class UGamePreferenceBool;
 class UGamePreferenceFloat;
 class AOmegaAbility;
 class UOmegaSaveGame;
-
+class UOmegaInputMode;
 
 USTRUCT(BlueprintType)
 struct FGameplaySystemAbilityRules
@@ -38,7 +38,7 @@ struct FGameplaySystemAbilityRules
 };
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShutdown, FString, Flag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnShutdown, UObject*, Context, FString, Flag);
 
 UCLASS(config = Game, notplaceable, BlueprintType, Blueprintable, Transient, hideCategories = (Info, Rendering, MovementReplication, Collision, HLOD, WorldPartition), meta = (ShortTooltip = ""))
 class OMEGAGAMEFRAMEWORK_API AOmegaGameplaySystem : public AActor, public IOmegaSaveInterface
@@ -62,18 +62,41 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//**Start & End***//
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintNativeEvent, DisplayName="On Activated")
 		void SystemActivated(class UObject* Context, const FString& Flag);
 
-	UFUNCTION(BlueprintImplementableEvent)
-		void SystemShutdown(const FString& Flag);
+	//-----------------------
+	// SHUTDOWN
+	//-----------------------
+	UFUNCTION(BlueprintNativeEvent, DisplayName="On Finish Shutdown")
+		void SystemShutdown(UObject* Context, const FString& Flag);
 
+	UPROPERTY()
+	UObject* Shutdown_Context = nullptr;
+	UPROPERTY()
+	FString Shutdown_Flag;
+
+	
 	//Will shut down this gameplay system//
-	UFUNCTION(BlueprintCallable, Category = "Ω|Gameplay")
-		void Shutdown(FString Flag);
+	UFUNCTION(BlueprintCallable, Category = "Omega|GameplaySystem", meta=(AdvancedDisplay="Context, Flag"))
+		void Shutdown(UObject* Context, FString Flag);
 
+	UFUNCTION(BlueprintNativeEvent, Category="Omega|GameplaySystem")
+	void OnBeginShutdown(UObject* Context, const FString& Flag);
+
+	//WARNING: Do not use this function unless you are overriding the OnBeginShutdown, as it is used to complete the shutdown event. DO NOT CALL OUTSIDE OF THE SYSTEM.
+	UFUNCTION(BlueprintCallable, Category = "Omega|GameplaySystem")
+	void CompleteShutdown();
+	
+	//-----------------------
+	// Gameplay State
+	//-----------------------
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGameplayStateChange(FGameplayTag NewState);
+	
 	//Context Object//
-	UPROPERTY(BlueprintReadOnly, meta = (ExposeOnSpawn = "true"), Category = "Ω|Gameplay")
+	UPROPERTY(BlueprintReadOnly, meta = (ExposeOnSpawn = "true"), Category = "Omega|GameplaySystem")
 		class UObject* ContextObject;
 	UPROPERTY()
 		FString TempFlag;
@@ -96,7 +119,9 @@ public:
 	////////////////////////////////////
 	////////////--PLAYER--/////////////
 	////////////////////////////////////
-
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+	UOmegaInputMode* PlayerInputMode;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 	TArray<class TSubclassOf<UHUDLayer>> AddedPlayerWidgets;
 	

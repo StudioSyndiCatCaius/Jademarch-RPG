@@ -33,11 +33,14 @@ public class OmegaGameFramework : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
+				"CommonUI",
 				"EnhancedInput",
 				"Engine",
 				"DeveloperSettings",
+				"LevelSequence",
 				"UMG",
 				"InputCore",
+				"Niagara",
 				"Json",
 				"JsonUtilities"
 				// ... add other public dependencies that you statically link with here ...
@@ -53,6 +56,7 @@ public class OmegaGameFramework : ModuleRules
 				"Slate",
 				"SlateCore",
 				"Projects",
+				"AssetRegistry",
 				"GameplayTags",
 				"PropertyPath",
 				"DeveloperSettings"

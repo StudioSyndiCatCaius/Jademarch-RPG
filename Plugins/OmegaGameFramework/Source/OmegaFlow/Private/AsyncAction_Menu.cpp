@@ -3,11 +3,12 @@
 
 #include "AsyncAction_Menu.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Player/OmegaPlayerSubsystem.h"
 
-void UAsyncAction_Menu::NativeShutdown(FGameplayTagContainer CloseTags, const FString OutFlag)
+void UAsyncAction_Menu::NativeShutdown(FGameplayTagContainer CloseTags, UObject* Context, const FString OutFlag)
 {
-	Closed.Broadcast(CloseTags, OutFlag);
+	Closed.Broadcast(CloseTags, Context, OutFlag);
 	SetReadyToDestroy();
 }
 
@@ -19,7 +20,16 @@ void UAsyncAction_Menu::Activate()
 	if(!IsMenuOpen)
 	{
 		UMenu* LocalMenu = SubsystemRef->OpenMenu(MenuRef, ContextRef, TagsRef, FlagRef);
-		LocalMenu->OnClosed.AddDynamic(this, &UAsyncAction_Menu::UAsyncAction_Menu::NativeShutdown);
+		if(LocalMenu)
+		{
+			LocalMenu->OnClosed.AddDynamic(this, &UAsyncAction_Menu::UAsyncAction_Menu::NativeShutdown);
+		}
+		else
+		{
+			Failed.Broadcast();
+			SetReadyToDestroy();
+		}
+		
 	}
 	else
 	{
@@ -28,12 +38,22 @@ void UAsyncAction_Menu::Activate()
 	}
 }
 
-UAsyncAction_Menu* UAsyncAction_Menu::OpenMenu(APlayerController* Player, const TSubclassOf<UMenu> MenuClass, UObject* Context, const FGameplayTagContainer OpenTags, const FString& OpenFlag)
+UAsyncAction_Menu* UAsyncAction_Menu::OpenMenu(UObject* WorldContextObject, APlayerController* Player, const TSubclassOf<UMenu> MenuClass, UObject* Context, const FGameplayTagContainer OpenTags, const FString& OpenFlag)
 {
+	APlayerController* TempPlayer = nullptr;
+	if(Player)
+	{
+		TempPlayer = Player;
+	}
+	else if(WorldContextObject)
+	{
+		TempPlayer = UGameplayStatics::GetPlayerController(WorldContextObject,0);
+	}
+	
 	UAsyncAction_Menu* NewMenuNode = NewObject<UAsyncAction_Menu>();
 	NewMenuNode->MenuRef = MenuClass;
 	NewMenuNode->TagsRef = OpenTags;
-	NewMenuNode->PlayerRef = Player;
+	NewMenuNode->PlayerRef = TempPlayer;
 	NewMenuNode->ContextRef = Context;
 	NewMenuNode->FlagRef = OpenFlag;
 	return NewMenuNode;

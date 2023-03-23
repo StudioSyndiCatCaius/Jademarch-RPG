@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
+#include "Kismet/BlueprintFunctionLibrary.h"
 #include "OmegaUtilityFunctions.generated.h"
 
 UCLASS()
@@ -11,7 +11,10 @@ class UOmegaUtilityFunctions : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
+	/*
+	 
 	//UFUNCTION(BlueprintPure, Category="Omega|Utilities|PropertyAccess")
 	static float GetHardVariable_Float(UObject* Object, const FString& VariableName, bool bValid);
+	*/
 	
 };

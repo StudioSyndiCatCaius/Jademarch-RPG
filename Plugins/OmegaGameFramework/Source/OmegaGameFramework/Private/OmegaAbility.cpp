@@ -190,6 +190,7 @@ void AOmegaAbility::Execute(UObject* Context)
 		UE_LOG(LogTemp, Warning, TEXT("Valid Execute"));
 		bIsActive = true;
 		CombatantOwner->CancelAbilitiesWithTags(CancelAbilities);
+		CombatantOwner->CancelAbilitiesWithTags(BlockAbilities);
 		CombatantOwner->SetAbilityActive(true, this);
 
 		// TIMLEINE
@@ -234,7 +235,7 @@ bool AOmegaAbility::CanActivate_Implementation(const UObject* Context)
 bool AOmegaAbility::SetInputEnabledForOwner(bool Enabled)
 {
 	APlayerController* TempController;
-	if(Cast<APlayerController>(GetAbilityOwnerCharacter()->GetController()))
+	if(GetAbilityOwnerCharacter() && Cast<APlayerController>(GetAbilityOwnerCharacter()->GetController()))
 	{
 		TempController = Cast<APlayerController>(GetAbilityOwnerCharacter()->GetController());
 		if(Enabled)
