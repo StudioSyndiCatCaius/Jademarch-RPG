@@ -33,10 +33,6 @@
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/ce01648a2cde41338991bb855a624ffa"
 		},
 		{
-			"Name": "Zone_Testalot",
-			"Enabled": true
-		},
-		{
 			"Name": "Water",
 			"Enabled": true
 		},
@@ -50,10 +46,6 @@
 		},
 		{
 			"Name": "CommonUI",
-			"Enabled": true
-		},
-		{
-			"Name": "Campaign_Main",
 			"Enabled": true
 		}
 	]
